@@ -65,9 +65,9 @@ void findStone() {
     while(currentHeight >= HEIGHT_THRESHOLD) {
         raiseArm(0.1);
         currentHeight = readHeight();
-        if(analogRead(HEIGHT_SENSOR) < DETECT_THRESHOLD) {
+        if(analogRead(HEIGHT_SENSOR) > DETECT_THRESHOLD) {
             tapeDetected = true; 
-            raiseArm(currentHeight);
+            //raiseArm(currentHeight);
             break;
         }
     }
