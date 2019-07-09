@@ -4,6 +4,7 @@
 #include <math.h>
 #include <Adafruit_SSD1306.h>
 #include <splash.h>
+#include <sesnors.h>
 
 #define NO_FORK 0
 #define FORK_ON_LEFT 1

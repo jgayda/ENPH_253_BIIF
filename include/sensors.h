@@ -1,0 +1,21 @@
+#ifndef SENSORS_H
+#define SENSORS_H
+
+//TAPE FOLLOWER
+#define DETECT_THRESHOLD PA0
+#define TAPE_FOLLOWER_L PA5
+#define TAPE_FOLLOWER_R PA6
+
+//POST DETECTORS
+#define FORK_SENSOR_L PA7
+#define FORK_SENSOR_R PA8
+#define ECHO_L PB4
+#define TRIG_L PB5
+#define ECHO_R PB6
+#define TRIG_R PB7
+#define DISTANCE_THRESH 14 //inches
+
+#define OLED_RESET -1
+#define INTERRUPTPIN PA4
+
+#endif
