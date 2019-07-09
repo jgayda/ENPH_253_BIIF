@@ -5,15 +5,85 @@
 #include <Adafruit_SSD1306.h>
 #include <splash.h>
 
+#define NO_FORK 0
+#define FORK_ON_LEFT 1
+#define FORK_ON_RIGHT 2
+
+bool followTape();
+int detectFork();
+int detectDistance_cm(int trigPin);
+int detectDistance_in(int trigPin);
+
 /* searchMode
  * 
- * Robot is actively following tape and looking for 
+ * Robot is actively following tape and looking for posts
+ * POSSIBLE TRANSITION STATES: */
+#define search 0
+#define approach 1
+/* 
  */
 int searchMode() {
-    int searching = 0;
-    //Insert Code here
-    return searching;
+    if(followTape()) {
+        int fork = detectFork();
+        if(fork == FORK_ON_LEFT || fork == FORK_ON_RIGHT) {
+            return approach;
+        } else {
+            return search;
+        }
+    } else {
+        //Go back on tape
+        return search; 
+    }
 }
+
+/* followTape
+ * Returns true if on the tape, false otherwise.
+ */
+bool followTape() {
+    bool onTape = true;
+    return onTape;
+}
+
+int detectFork() {
+    int detect = 0;
+    return detect;
+}
+
+/* detectDistance_cm
+ * 
+ * Returns the detected sonar distance in cm
+ * @param : trigPin - t
+ * @return : the distance in cm
+ */
+// int detectDistance_cm(int trigPin) {
+//   // Clears the trigPin
+//   digitalWrite(trigPin, LOW);
+//   delayMicroseconds(2);
+//   // Sets the trigPin on HIGH state for 10 microseconds
+//   digitalWrite(trigPin, HIGH);
+//   delayMicroseconds(10);
+//   digitalWrite(trigPin, LOW);
+//   // Reads the echoPin, returns the sound wave travel time in microseconds
+//   distance_cm = pulseIn(echoPin, HIGH) * 0.034 / 2;
+//   return distance_cm;
+// }
+
+/* detectDistance_in
+ *
+ * Returns the detected sonar distance in inches
+ */
+// int detectDistance_in(int trigPin) {
+//   // Clears the trigPin
+//   digitalWrite(trigPin, LOW);
+//   delayMicroseconds(2);
+//   // Sets the trigPin on HIGH state for 10 microseconds
+//   digitalWrite(trigPin, HIGH);
+//   delayMicroseconds(10);
+//   digitalWrite(trigPin, LOW);
+//   // Reads the echoPin, returns the sound wave travel time in microseconds
+//   distance_in = pulseIn(echoPin, HIGH) * 0.034 / 2 * 0.393701;
+//   return distance_in;
+// }
 
 // //TAPE FOLLOWER
 // #define DETECT_THRESHOLD PA0
@@ -106,34 +176,6 @@ int searchMode() {
       
 //     }
 //   }
-// }
-
-// // Returns the detected sonar distance in cm
-// int detectDistance_cm(int trigPin) {
-//   // Clears the trigPin
-//   digitalWrite(trigPin, LOW);
-//   delayMicroseconds(2);
-//   // Sets the trigPin on HIGH state for 10 microseconds
-//   digitalWrite(trigPin, HIGH);
-//   delayMicroseconds(10);
-//   digitalWrite(trigPin, LOW);
-//   // Reads the echoPin, returns the sound wave travel time in microseconds
-//   distance_cm = pulseIn(echoPin, HIGH) * 0.034 / 2;
-//   return distance_cm;
-// }
-
-// // Returns the detected sonar distance in inches
-// int detectDistance_in(int trigPin) {
-//   // Clears the trigPin
-//   digitalWrite(trigPin, LOW);
-//   delayMicroseconds(2);
-//   // Sets the trigPin on HIGH state for 10 microseconds
-//   digitalWrite(trigPin, HIGH);
-//   delayMicroseconds(10);
-//   digitalWrite(trigPin, LOW);
-//   // Reads the echoPin, returns the sound wave travel time in microseconds
-//   distance_in = pulseIn(echoPin, HIGH) * 0.034 / 2 * 0.393701;
-//   return distance_in;
 // }
 
 // //  if( reflectance3 > threshold && reflectance2 > threshold  || reflectance3 > threshold && reflectance1 > threshold ) {

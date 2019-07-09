@@ -11,3 +11,7 @@
  *                       Pathfinder Mode
  * 
  */
+
+int approachMode(int direction) {
+
+}

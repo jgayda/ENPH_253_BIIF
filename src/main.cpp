@@ -4,7 +4,9 @@
 #include <time.h>
 #include <math.h>
 #include <Adafruit_SSD1306.h>
+
 #include <search.h>
+#include <approach.h>
 
 //TAPE FOLLOWER
 #define DETECT_THRESHOLD PA0
@@ -26,13 +28,17 @@
 
 //MODES
 #define search 0
-#define approachMode 1
-#define retrieveMode 2
-#define pathfinderMode 3
-#define returnMode 4
-#define depositMode 5
-#define retreatMode 6
-#define defenseMode 7
+#define approachleft 1
+#define approachright 2
+#define retrieve 3
+#define pathfinder 4
+#define return 5
+#define deposit 6
+#define retreat 7
+#define defense 8
+
+#define left 0
+#define right 1
 
 volatile int setMode = search;
 
@@ -59,17 +65,19 @@ void loop() {
   switch (setMode) {
     case search :
       setMode = searchMode();
-    case approachMode :
+    case approachleft :
+      setMode = approachMode(left);
+    case approachright :
+      setMode = approachMode(right);
+    case retrieve :
       //
-    case retrieveMode :
+    case pathfinder :
       //
-    case pathfinderMode :
+    case return :
       //
-    case returnMode :
+    case deposit :
       //
-    case depositMode :
-      //
-    case defenseMode : 
+    case defense : 
       //
       break; 
   }
