@@ -24,17 +24,16 @@ int storageDirection = RIGHT; // CHANGE FOR TEAM
 int initialTurn = RIGHT;
 bool forkPathCrossed = false; // have we crossed the tape completely
 
-//int searchMode();
+int searchMode();
 
 void setup() {
   /* if team switch on -> define THANOS
      else -> define METHANOS */
-  delay(5000);
-  Serial.begin(115200);
+  Serial.begin(9600);
   Wire.begin();
   Serial.println("Starting Setup... ");
-
-  //TAPE FOLLOWER
+  delay(5000);
+ // TAPE FOLLOWER
   pinMode(DETECT_THRESHOLD, INPUT);
   pinMode(TAPE_FOLLOWER_L,INPUT);
   pinMode(TAPE_FOLLOWER_R,INPUT);
@@ -43,15 +42,33 @@ void setup() {
   //POST DETECTORS
   pinMode(FORK_SENSOR_L, INPUT);
   pinMode(FORK_SENSOR_R, INPUT);
-  pinMode(ECHO_L, INPUT);
-  pinMode(TRIG_L, OUTPUT);
-  pinMode(ECHO_L, INPUT);
-  pinMode(TRIG_L, OUTPUT);
+  
+  //Do not uncomment before figuring out what the fuck is going on (the pins are weird )
+  // // pinMode(ECHO_L, INPUT);
+  //  pinMode(TRIG_L, OUTPUT);
+  // // pinMode(ECHO_R, INPUT);
+  //  pinMode(TRIG_R,OUTPUT);
+
   Serial.println("Setup Completed!");
 }
 
 void loop() {
-  Serial.println(setMode);
+   Serial.print("LEFT FORK: ");
+   Serial.print(analogRead(FORK_SENSOR_L));
+   Serial.print(" ");
+   Serial.print("TF LEFT: ");
+   Serial.print(analogRead(TAPE_FOLLOWER_L));
+   Serial.print(" ");
+   Serial.print("TF RIGHT: ");
+   Serial.print(analogRead(TAPE_FOLLOWER_R));
+   Serial.print(" ");
+   Serial.print("RIGHT FORK: ");
+   Serial.print(analogRead(FORK_SENSOR_R));
+   Serial.print(" ");
+   Serial.print("THRESHOLD: ");
+   Serial.print(analogRead(DETECT_THRESHOLD));
+   Serial.println(" ");
+   Serial.println(setMode);
   switch (setMode) {
     case SEARCH:
       setMode = searchMode();
@@ -73,7 +90,7 @@ void loop() {
       //setMode = defenseMode();
       break;
     case TURN_L:
-      setMode = turnMode(TURN_L);
+     setMode = turnMode(TURN_L);
       break;
     case TURN_R:
       setMode = turnMode(TURN_R);

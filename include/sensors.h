@@ -20,7 +20,7 @@
 #define TURN_R 9
 
 //TAPE FOLLOWER
-#define DETECT_THRESHOLD PB_0
+#define DETECT_THRESHOLD PA_3
 #define TAPE_FOLLOWER_L PA_6
 #define TAPE_FOLLOWER_R PA_5
 #define LEFT_WHEEL_FWD PB_7
@@ -33,9 +33,9 @@
 #define FORK_SENSOR_R PA_4
 
 //SONAR
-#define ECHO_L PA_11
-#define TRIG_L PA_11
-#define ECHO_R PA_11
+#define ECHO_L PB_3
+#define TRIG_L PA_12
+#define ECHO_R PA_15
 #define TRIG_R PA_11
 #define DISTANCE_THRESH 14 //inches
 

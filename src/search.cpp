@@ -40,8 +40,8 @@ int searchMode() {
             Serial.println("I detected a fork");
             stopRobot();
             if(fork == FORK_ON_LEFT) {
-                trigPin = TRIG_L;
-                echoPin = ECHO_L;
+                // trigPin = TRIG_L;
+                // echoPin = ECHO_L;
                 direction = LEFT;
             }
             else {
@@ -49,15 +49,15 @@ int searchMode() {
                 echoPin = ECHO_R;
                 direction = RIGHT;
             }
-           distance = detectDistance_cm (trigPin, echoPin);
+          // distance = detectDistance_cm (trigPin, echoPin);
                 // regular fork
             Serial.print("THE FORK IS ON THE ");
             if (direction == LEFT){
                 Serial.println("LEFT");
-                return TURN_L;
+               // return TURN_L;
             } else {
                 Serial.println("RIGHT");
-                return TURN_R;
+                //return TURN_R;
             }
 
             // if(forkHistory.size() ==0) {
