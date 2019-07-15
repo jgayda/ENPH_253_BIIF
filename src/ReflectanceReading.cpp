@@ -12,10 +12,7 @@ volatile float getReflectance(int Sensor_pin, float threshold){
     if(analogRead(Sensor_pin)>threshold){
         return 1;
     }
-    Serial.print("Sensor and threshold:");
-    Serial.print(analogRead(Sensor_pin));
-    Serial.println(threshold);
-
+    Serial.println(analogRead(Sensor_pin));
     return 0;
 }
 

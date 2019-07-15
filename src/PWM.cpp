@@ -24,7 +24,7 @@ int driveMotor(uint32_t value, PinName forwardDrive, PinName backwardDrive){
 }
 
 void stopRobot(){
-     driveMotor(SPEED, LEFT_WHEEL_FWD, LEFT_WHEEL_BKWD ); //stop the wheel
+    driveMotor(SPEED, LEFT_WHEEL_FWD, LEFT_WHEEL_BKWD ); //stop the wheel
     driveMotor(SPEED, RIGHT_WHEEL_FWD, RIGHT_WHEEL_BKWD ); // stop the wheel
 }
 

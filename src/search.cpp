@@ -8,8 +8,6 @@
 #include <followTape.h>
 #include <PWM.h>
 
-
-
 int detectFork();
 int detectDistance_cm(PinName trigPin, PinName echoPin);
 int detectDistance_in(PinName trigPin, PinName echoPin);
@@ -27,14 +25,16 @@ int searchMode() {
     int distance = DISTANCE_THRESH + 10 ;
     int fork = NO_FORK;
     int error = 1000;
-    Serial.print("FORK:");
-    Serial.println(fork);
+
     if(fork == NO_FORK){
+        Serial.println("Following tape, no fork detected");
         error = followTape();
     }
+
     PinName trigPin;
     PinName echoPin;
-    if (error == 0) {
+
+    if (error == 10) {
         fork = detectFork();
         if(fork == FORK_ON_LEFT || fork == FORK_ON_RIGHT){
             Serial.println("I detected a fork");
@@ -54,10 +54,10 @@ int searchMode() {
             Serial.print("THE FORK IS ON THE ");
             if (direction == LEFT){
                 Serial.println("LEFT");
-               // return TURN_L;
+                return TURN_L;
             } else {
                 Serial.println("RIGHT");
-                //return TURN_R;
+                return TURN_R;
             }
 
             // if(forkHistory.size() ==0) {

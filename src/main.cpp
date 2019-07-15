@@ -31,17 +31,24 @@ void setup() {
      else -> define METHANOS */
   Serial.begin(9600);
   Wire.begin();
-  Serial.println("Starting Setup... ");
   delay(5000);
  // TAPE FOLLOWER
   pinMode(DETECT_THRESHOLD, INPUT);
   pinMode(TAPE_FOLLOWER_L,INPUT);
   pinMode(TAPE_FOLLOWER_R,INPUT);
-  startDriving();
 
   //POST DETECTORS
   pinMode(FORK_SENSOR_L, INPUT);
   pinMode(FORK_SENSOR_R, INPUT);
+
+  //WHEEL MOTOR PWMs
+  pinMode(LEFT_WHEEL_FWD, OUTPUT);
+  pinMode(LEFT_WHEEL_BKWD, OUTPUT);
+  pinMode(RIGHT_WHEEL_FWD, OUTPUT);
+  pinMode(RIGHT_WHEEL_BKWD, OUTPUT);
+
+  //SET THRESHOLD
+  float threshold = analogRead(DETECT_THRESHOLD);
   
   //Do not uncomment before figuring out what the fuck is going on (the pins are weird )
   // // pinMode(ECHO_L, INPUT);
@@ -49,30 +56,34 @@ void setup() {
   // // pinMode(ECHO_R, INPUT);
   //  pinMode(TRIG_R,OUTPUT);
 
+  //Check to see if robot is initially on tape
+  int initialCondition = 0;
+  while(analogRead(TAPE_FOLLOWER_L) < threshold || analogRead(TAPE_FOLLOWER_R) < threshold) {
+    if(initialCondition == 0) {
+      initialCondition++;
+      Serial.println("Robot Initially off tape, please fix :)");
+    }
+  }
+  startDriving();
   Serial.println("Setup Completed!");
 }
 
 void loop() {
    Serial.print("LEFT FORK: ");
    Serial.print(analogRead(FORK_SENSOR_L));
-   Serial.print(" ");
-   Serial.print("TF LEFT: ");
+   Serial.print(" | TF LEFT: ");
    Serial.print(analogRead(TAPE_FOLLOWER_L));
-   Serial.print(" ");
-   Serial.print("TF RIGHT: ");
+   Serial.print(" | TF RIGHT: ");
    Serial.print(analogRead(TAPE_FOLLOWER_R));
-   Serial.print(" ");
-   Serial.print("RIGHT FORK: ");
+   Serial.print(" | RIGHT FORK: ");
    Serial.print(analogRead(FORK_SENSOR_R));
-   Serial.print(" ");
-   Serial.print("THRESHOLD: ");
+   Serial.print(" | THRESHOLD: ");
    Serial.print(analogRead(DETECT_THRESHOLD));
-   Serial.println(" ");
+   Serial.print(" | MODE: ");
    Serial.println(setMode);
   switch (setMode) {
     case SEARCH:
       setMode = searchMode();
-      Serial.println("search mode");
       break;
     case APPROACH:
       //setMode = approachMode();
@@ -96,4 +107,7 @@ void loop() {
       setMode = turnMode(TURN_R);
       break;
   }
+  Serial.print("Exited with mode: ");
+  Serial.println(setMode);
+  //delay(5000);
 }

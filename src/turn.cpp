@@ -22,6 +22,12 @@ int turnMode (int direction) {
     }
     Serial.print("fork path crossed:");
     Serial.println(forkPathCrossed);
+    Serial.print("right sensor:");
+    Serial.println(rightSensor);
+    Serial.print("left sensor:");
+    Serial.println(leftSensor);
+    Serial.println("forkSensor:");
+    Serial.println(forkSensor);
     if(forkPathCrossed == true && rightSensor == 1 && leftSensor == 1 && forkSensor == 0){
         Serial.println("from turn mode back to search mode");
         forkPathCrossed = false;

@@ -18,14 +18,10 @@ int motorVal_L=0;
 int motorVal_R=0;
 
 void startDriving () {
-
 // Set initial reflectance memory to initial reflectance value for first loop comparison
   threshold = analogRead(DETECT_THRESHOLD);
   left_reflect_memory = getReflectance(TAPE_FOLLOWER_L, threshold);
   right_reflect_memory = getReflectance(TAPE_FOLLOWER_R, threshold);
-  driveMotor(speed, RIGHT_WHEEL_FWD, RIGHT_WHEEL_BKWD);
-  driveMotor(speed, LEFT_WHEEL_FWD, LEFT_WHEEL_BKWD);
-
 }
 
 
@@ -86,12 +82,15 @@ int followTape() {
     Serial.println(motorVal_R);
   }
   //LAST KNOWN LOCATION ON LEFT --> TURN RIGHT
-  else {
+  else if (error == 5){
       motorVal_L = driveMotor(PIDValue, LEFT_WHEEL_FWD, LEFT_WHEEL_BKWD);
       Serial.print("LAST ON LEFT | MotorVal_L: ");
       Serial.print(motorVal_L);
       Serial.print(" MotorVal_R: ");
       Serial.println(motorVal_R);
+  }
+  else{
+    Serial.println("No valid error detected");
   }
   //update sensor memory
   if(left_reflect == 1 || right_reflect == 1 ){
@@ -106,10 +105,15 @@ int followTape() {
 
 
 int detectFork () {
-  if (getReflectance(FORK_SENSOR_L,threshold) == 1) {
+  Serial.print("Left Fork Sensor: ");
+  int FSL_reflectance = getReflectance(FORK_SENSOR_L,threshold);
+  Serial.print("Right Fork Sensor: ");
+  int FSR_reflectance = getReflectance(FORK_SENSOR_R,threshold);
+
+  if (FSL_reflectance == 1) {
     return FORK_ON_LEFT;
   }
-  else if (getReflectance(FORK_SENSOR_R,threshold) == 1){
+  else if (FSR_reflectance == 1){
     return FORK_ON_RIGHT;
   }
   else {
