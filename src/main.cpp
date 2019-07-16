@@ -12,26 +12,35 @@
 #include <followTape.h>
 
 // TAPE FOLLOWER GLOBAL VARIABLE INITIALIZATION
-unsigned long start_prev_error = 0;
-unsigned long start_curr_error = 0;
 
-volatile int previousError = 0; //The previous different error value that we were getting
-volatile int previousDiffError = 0;
+unsigned long start_prev_error = 0; //Errors should all be 0 initially since robot won't begin following 
+unsigned long start_curr_error = 0; //tape unless both TFL and TFR are on the tape :) 
 
-volatile int setMode = SEARCH;
+volatile int previousError = 0; //The immediate previous sensed error we recieved
+volatile int previousDiffError = 0; //The previous DIFFERENT error value that we were sensing
 
+volatile int setMode = SEARCH; //Robot will initially be in search mode (following tape and looking for posts)
+
+//TODO: Include Methanos / Thanos Switch!
 int storageDirection = RIGHT; // CHANGE FOR TEAM
-int initialTurn = RIGHT;
+int initialTurn = RIGHT; //CHANGE FOR TEAM
+
 bool forkPathCrossed = false; // have we crossed the tape completely
 
-int searchMode();
+void debugSensorReadings(int setMode);
+void exitModeAlerts(int setMode);
+
+
 
 void setup() {
-  /* if team switch on -> define THANOS
-     else -> define METHANOS */
+
   Serial.begin(9600);
-  Wire.begin();
-  delay(5000);
+  //DO NOT inlucde Wire.begin() --> Interferes with the TX&RX functions of the bluepill!
+
+  //Delay added for debugging (allows time to catch beginning of Serial Monitor)
+  //Delete for competition
+  delay(1000);
+
  // TAPE FOLLOWER
   pinMode(DETECT_THRESHOLD, INPUT);
   pinMode(TAPE_FOLLOWER_L,INPUT);
@@ -56,31 +65,35 @@ void setup() {
   // // pinMode(ECHO_R, INPUT);
   //  pinMode(TRIG_R,OUTPUT);
 
+  //TODO: Add function that initially checks what team we are on
+
   //Check to see if robot is initially on tape
   int initialCondition = 0;
+  int counter = 0;
   while(analogRead(TAPE_FOLLOWER_L) < threshold || analogRead(TAPE_FOLLOWER_R) < threshold) {
     if(initialCondition == 0) {
       initialCondition++;
       Serial.println("Robot Initially off tape, please fix :)");
     }
+    counter++; 
+    if(counter % 10000 == 0) {
+      Serial.print("Left Sensor Value: ");
+      Serial.print(analogRead(TAPE_FOLLOWER_L));
+      Serial.print(" | Right Sensor Value: ");
+      Serial.println(analogRead(TAPE_FOLLOWER_R));
+    }
   }
+
+  //Start driving the robot forward once the initial conditions have been meet
   startDriving();
-  Serial.println("Setup Completed!");
 }
 
+
+
+//MAIN STATE SWITCH BOX
 void loop() {
-   Serial.print("LEFT FORK: ");
-   Serial.print(analogRead(FORK_SENSOR_L));
-   Serial.print(" | TF LEFT: ");
-   Serial.print(analogRead(TAPE_FOLLOWER_L));
-   Serial.print(" | TF RIGHT: ");
-   Serial.print(analogRead(TAPE_FOLLOWER_R));
-   Serial.print(" | RIGHT FORK: ");
-   Serial.print(analogRead(FORK_SENSOR_R));
-   Serial.print(" | THRESHOLD: ");
-   Serial.print(analogRead(DETECT_THRESHOLD));
-   Serial.print(" | MODE: ");
-   Serial.println(setMode);
+  //To see the values for all of the sensors, uncomment the next line
+  //debugSensorReadings(setMode);
   switch (setMode) {
     case SEARCH:
       setMode = searchMode();
@@ -107,7 +120,34 @@ void loop() {
       setMode = turnMode(TURN_R);
       break;
   }
+  //To debug and see the mode that the robot exited with, uncomment the next line
+  //exitModeAlerts(setMode);
+}
+
+
+
+//Prints out the sensor readings for all of the QRD sensors on the front of the robot
+//For debugging purposes :) 
+void debugSensorReadings(int setMode) {
+  Serial.print("FSL Value: ");
+  Serial.print(analogRead(FORK_SENSOR_L));
+  Serial.print(" | TFL Value: ");
+  Serial.print(analogRead(TAPE_FOLLOWER_L));
+  Serial.print(" | TFR Value: ");
+  Serial.print(analogRead(TAPE_FOLLOWER_R));
+  Serial.print(" | FSR Value: ");
+  Serial.print(analogRead(FORK_SENSOR_R));
+  Serial.print(" | THRESH Value: ");
+  Serial.print(analogRead(DETECT_THRESHOLD));
+  Serial.print(" | MODE: ");
+  Serial.println(setMode);
+}
+
+
+
+//Prints the mode that the robot exited the loop with 
+//For debugging purposes :) 
+void exitModeAlerts(int setMode) {
   Serial.print("Exited with mode: ");
   Serial.println(setMode);
-  //delay(5000);
 }

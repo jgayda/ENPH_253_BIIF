@@ -23,16 +23,10 @@
 #define DETECT_THRESHOLD PA_3
 #define TAPE_FOLLOWER_L PA_6
 #define TAPE_FOLLOWER_R PA_5
-#define LEFT_WHEEL_FWD PB_7
-#define LEFT_WHEEL_BKWD PB_6
-// #define LEFT_WHEEL_FWD PA_2
-// #define LEFT_WHEEL_BKWD PA_1
-#define RIGHT_WHEEL_FWD PB_8
-#define RIGHT_WHEEL_BKWD PB_9
-// #define LEFT_WHEEL_FWD PB_8
-// #define LEFT_WHEEL_BKWD PB_9
-// #define RIGHT_WHEEL_FWD PB_7
-// #define RIGHT_WHEEL_BKWD PB_6
+#define LEFT_WHEEL_FWD PB_6
+#define LEFT_WHEEL_BKWD PB_7
+#define RIGHT_WHEEL_FWD PB_9
+#define RIGHT_WHEEL_BKWD PB_8
 
 //POST DETECTORS
 #define FORK_SENSOR_L PA_7
@@ -45,8 +39,8 @@
 #define TRIG_R PA_11
 #define DISTANCE_THRESH 14 //inches
 
-#define OLED_RESET -1
-#define INTERRUPTPIN PA_4
+// #define OLED_RESET -1
+// #define INTERRUPTPIN PA_4
 
 #define NO_FORK 0
 #define FORK_ON_LEFT 1

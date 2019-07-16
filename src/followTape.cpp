@@ -9,10 +9,7 @@ unsigned long deltaError=0;
 volatile float PIDValue=0;
 volatile float left_reflect_memory=0, right_reflect_memory=0;
 
- const int speed = SPEED;
-
-
-
+const int speed = SPEED;
 
 int motorVal_L=0;
 int motorVal_R=0;
@@ -29,7 +26,6 @@ int followTape() {
   threshold = analogRead(DETECT_THRESHOLD);
   left_reflect = getReflectance(TAPE_FOLLOWER_L, threshold);
   right_reflect = getReflectance(TAPE_FOLLOWER_R, threshold);
-
   error = getSensorError(left_reflect, right_reflect, left_reflect_memory, right_reflect_memory);
 
   unsigned long currentTime = millis();
@@ -119,5 +115,4 @@ int detectFork () {
   else {
     return NO_FORK;
   }
-
 }

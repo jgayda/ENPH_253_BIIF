@@ -8,7 +8,6 @@ Reads reflectance from TCRT5000
 #include <Arduino.h>
 
 volatile float getReflectance(int Sensor_pin, float threshold){
-
     if(analogRead(Sensor_pin)>threshold){
         return 1;
     }

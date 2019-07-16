@@ -20,7 +20,6 @@ int driveMotor(uint32_t value, PinName forwardDrive, PinName backwardDrive){
     pwm_start(forwardDrive, 100000, maxSpeed, inputSpeed, 1);
     pwm_start(backwardDrive, 100000, maxSpeed, 0, 1);
     return inputSpeed;
-
 }
 
 void stopRobot(){

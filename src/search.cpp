@@ -27,7 +27,7 @@ int searchMode() {
     int error = 1000;
 
     if(fork == NO_FORK){
-        Serial.println("Following tape, no fork detected");
+        //Serial.println("Following tape, no fork detected");
         error = followTape();
     }
 
