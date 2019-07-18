@@ -1,20 +1,19 @@
-/*
-Date: June 13, 2019
-Team 3
-Reads reflectance from TCRT5000
- */
-
 #include <ReflectanceReading.h>
 #include <Arduino.h>
 
+/* getReflectance()
+ * Returns 
+ */
 volatile float getReflectance(int Sensor_pin, float threshold){
-    if(analogRead(Sensor_pin)>threshold){
-        return 1;
-    }
-    Serial.println(analogRead(Sensor_pin));
-    return 0;
+//   if(analogRead(Sensor_pin)>threshold){
+//     return 1;
+//   }
+//   return 0;
+  return (analogRead(Sensor_pin) > threshold) ? 1 : 0;
 }
 
+/* getSensorError
+ */
 volatile int getSensorError (int leftSensor, int rightSensor, int leftSensorMemory, int rightSensorMemory) {
       //BOTH ON TAPE
     volatile int error = 0;

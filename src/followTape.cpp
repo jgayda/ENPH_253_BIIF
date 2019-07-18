@@ -14,14 +14,31 @@ const int speed = SPEED;
 int motorVal_L=0;
 int motorVal_R=0;
 
+
+
+/* startDriving()
+ * 
+ * Starts driving the robot by writing max speed (SPEED) to both of the motors
+ */
 void startDriving () {
 // Set initial reflectance memory to initial reflectance value for first loop comparison
   threshold = analogRead(DETECT_THRESHOLD);
   left_reflect_memory = getReflectance(TAPE_FOLLOWER_L, threshold);
   right_reflect_memory = getReflectance(TAPE_FOLLOWER_R, threshold);
+  driveMotor(0, LEFT_WHEEL_FWD, LEFT_WHEEL_BKWD);
+  driveMotor(0, RIGHT_WHEEL_FWD, RIGHT_WHEEL_BKWD);
 }
 
 
+
+/* followTape()
+ * 
+ * Follows the tape, computes the position error of the robot relative to the tape, and makes
+ * necessary corrections to its motor values using PID to ensure that the robot remains on the tape
+ *    Robot Position State: LAST ON RIGHT  |  OFF ON LEFT  |  ON TAPE  |  OFF ON RIGHT  |  LAST ON LEFT
+ *    Error Value:               -5                -1            0              1                5
+ * @returns error - the integer value corresponding to the relative error of the robot's position
+ */
 int followTape() {
   threshold = analogRead(DETECT_THRESHOLD);
   left_reflect = getReflectance(TAPE_FOLLOWER_L, threshold);
@@ -41,8 +58,8 @@ int followTape() {
   }
 
   PIDValue = PID_compute(error, previousDiffError, dt);
-  Serial.print("PID Value: ");
-  Serial.print(PIDValue);
+  // Serial.print("PID Value: ");
+  // Serial.print(PIDValue);
 
   //BOTH ON TAPE
   if(error == 0){
@@ -88,6 +105,7 @@ int followTape() {
   else{
     Serial.println("No valid error detected");
   }
+
   //update sensor memory
   if(left_reflect == 1 || right_reflect == 1 ){
       left_reflect_memory = left_reflect;
@@ -100,6 +118,16 @@ int followTape() {
 }
 
 
+
+/* detectFork()
+ * 
+ * Checks to see if there is a fork on either side of the robot BUT ONLY if the robot
+ * has an error of 0 to ensure our confidence on whether or not the robot actually sees a fork
+ * @return : FORK_STATUS - Can be:
+ *                      (0) NO_FORK
+ *                      (1) FORK_ON_LEFT
+ *                      (2) FORK_ON_RIGHT
+ */
 int detectFork () {
   Serial.print("Left Fork Sensor: ");
   int FSL_reflectance = getReflectance(FORK_SENSOR_L,threshold);

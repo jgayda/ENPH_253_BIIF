@@ -1,46 +1,60 @@
 #include <Arduino.h>
 #include <sensors.h>
 
-int maxSpeed = SPEED;
-
 //Values to tune for PID control
-float k_p = 0.11 * maxSpeed;
-float k_d=100 * maxSpeed;
+float k_p = 0.13 * SPEED;
+float k_d= 4 * SPEED;
 
-/*
-*June 13th 2019
-*Krysten Zissos
-*This function takes a float error value, a float previous error value, and a float change in time value (time since error last changed).
-*It outputs an int, g, as a value scaled by PID control
-*/
+void PID_debugger(float error, float prevError, float dTime, float propor, float deriv);
 
+
+
+/* PID_compute()
+ * Takes in an error value, the previous DIFFERENT error value, and the difference in time between the current error and the timestamp
+ * since the most previous CHANGE in error.
+ * @param : error - the CURRENT measured error
+ *          prevError - the previous DIFFERENT error value
+ *          dTime - the difference in time between error and prevError
+ * @return : PID_value - the calculated PID value which can either be:
+ *                         (1) if PID_value > Maxiumum Robot Speed --> PID_value will be SPEED
+ *                         (2) else the PID_value will be derivative + proportional
+ */
 float PID_compute (float error, float prevError, float dTime){
 
-    float d = 0.0;
+    float deriv = 0.0;
     if(dTime != 0){
-        d = k_d * (error - prevError) / (dTime);
+        deriv = k_d * (error - prevError) / (dTime);
     }
 
-    float p=error*k_p;
-    float g= abs(p+d);
+    float propor = error * k_p;
+    //Uncomment the next line for debugging purposes
+    //PID_debugger(error, prevError, dTime, propor, deriv);
+    return (abs(propor + deriv) < SPEED) ? abs(propor + deriv) : SPEED;
+}
 
-    Serial.print("prevError: ");
-    Serial.print(prevError);
-    Serial.print("Error ");
-    Serial.print(error);
-    Serial.print(" dTime: ");
-    Serial.print(dTime);
-    Serial.print(" ");
-    Serial.print(" d = ");
-    Serial.print(d);
-    Serial.print(" p = ");
-    Serial.print(p);
 
-    // clamps the PID so we won't explode
-    if(g > maxSpeed){
-        g = maxSpeed;
-    }
-    //scales g value to an integer from 1-250, was 500 originally in h bridge lab
-    // g = 20 * g;
-    return g;
+
+/* PID_debugger()
+ * 
+ * Prints out all of our error values, and the calculated needed PID values
+ * For debugging purposes only :) 
+ * @param : error - the CURRENT measured error
+ *          prevError - the previous DIFFERENT error value
+ *          dTime - the difference in time between error and prevError
+ *          propor - the calculated proportional PID value
+ *          deriv - the calculated derivative PID value
+ */
+void PID_debugger(float error, float prevError, float dTime, float propor, float deriv) {
+  Serial.print("Current Error: ");
+  Serial.print(error);
+  Serial.print(" | Previous Error: ");
+  Serial.print(prevError);
+  Serial.print(" | dTime: ");
+  Serial.print(dTime);
+  Serial.print(" | Proportional Control: ");
+  Serial.print(propor);
+  Serial.print(" | Derivative Control: ");
+  Serial.print(deriv);
+  Serial.print(" | PID Value Written: ");
+  Serial.println(abs(propor+deriv));
 }

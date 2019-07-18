@@ -27,6 +27,8 @@ int initialTurn = RIGHT; //CHANGE FOR TEAM
 
 bool forkPathCrossed = false; // have we crossed the tape completely
 
+bool pingSlave = false; 
+
 void debugSensorReadings(int setMode);
 void exitModeAlerts(int setMode);
 
@@ -39,7 +41,7 @@ void setup() {
 
   //Delay added for debugging (allows time to catch beginning of Serial Monitor)
   //Delete for competition
-  delay(1000);
+  delay(2000);
 
  // TAPE FOLLOWER
   pinMode(DETECT_THRESHOLD, INPUT);
@@ -86,6 +88,7 @@ void setup() {
 
   //Start driving the robot forward once the initial conditions have been meet
   startDriving();
+  Serial.println("Setup Completed");
 }
 
 
@@ -118,6 +121,11 @@ void loop() {
       break;
     case TURN_R:
       setMode = turnMode(TURN_R);
+      // Serial.println("Turning Right");
+      // turnRobot(RIGHT);
+      // delay(2000);
+      // stopRobot();
+      // setMode = DEPOSIT;
       break;
   }
   //To debug and see the mode that the robot exited with, uncomment the next line
@@ -126,8 +134,12 @@ void loop() {
 
 
 
-//Prints out the sensor readings for all of the QRD sensors on the front of the robot
-//For debugging purposes :) 
+/* debugSensorReadings()
+ *
+ * Prints out the sensor readings for all of the QRD sensors on the front of the robot
+ * For debugging purposes only :) 
+ * @param : setMode - the current mode/state of the robot
+ */
 void debugSensorReadings(int setMode) {
   Serial.print("FSL Value: ");
   Serial.print(analogRead(FORK_SENSOR_L));
@@ -145,8 +157,12 @@ void debugSensorReadings(int setMode) {
 
 
 
-//Prints the mode that the robot exited the loop with 
-//For debugging purposes :) 
+/* exitModeAlerts()
+ * 
+ * Prints the mode that the robot exited the loop with
+ * For debugging purposes only :) 
+ * @param : setMode - the current mode/state of the robot
+ */ 
 void exitModeAlerts(int setMode) {
   Serial.print("Exited with mode: ");
   Serial.println(setMode);

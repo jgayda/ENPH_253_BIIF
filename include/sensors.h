@@ -55,4 +55,12 @@ extern std :: stack <int> forkHistory;
 extern int storageDirection;
 extern int initialTurn;
 extern bool forkPathCrossed;
+
+//SLAVE BLUE PILL
+#define SLAVE_ADDRESS 69;
+extern bool pingSlave; 
+
+//POINT COUNTER
+extern int stonesScored;
+
 #endif

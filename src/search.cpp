@@ -10,15 +10,17 @@
 
 int detectFork();
 int detectDistance_cm(PinName trigPin, PinName echoPin);
-int detectDistance_in(PinName trigPin, PinName echoPin);
 
-/* searchMode
- *
- * Robot is actively following tape and looking for posts
- * POSSIBLE TRANSITION STATES: */
 #define search 0
 #define approach 1
-/*
+
+/* searchMode()
+ *
+ * Robot is actively following tape and looking for posts
+ * POSSIBLE TRANSITION STATES: 
+ *      (1) searchMode - no fork detected, the robot continues to search
+ *      (2) turnMode (left or right) - robot detects fork
+ * @returns : setMode - the mode that the robot switches to post searchMode
  */
 int searchMode() {
     int direction =0;
@@ -86,10 +88,13 @@ int searchMode() {
     return SEARCH;
 }
 
+
+
 /* detectDistance_cm
  *
  * Returns the detected sonar distance in cm
- * @param : trigPin - t
+ * @param : trigPin - trig pin for the corresponding sonar
+ *          echoPin - echo pin for the corresponding sonar
  * @return : the distance in cm
  */
 int detectDistance_cm(PinName trigPin,PinName echoPin) {
@@ -104,23 +109,6 @@ int detectDistance_cm(PinName trigPin,PinName echoPin) {
   int distance_cm = pulseIn(echoPin, HIGH) * 0.034 / 2;
   return distance_cm;
 }
-
-// /* detectDistance_in
-//  *
-//  * Returns the detected sonar distance in inches
-//  */
-// int detectDistance_in(int trigPin) {
-//   // Clears the trigPin
-//   digitalWrite(trigPin, LOW);
-//   delayMicroseconds(2); //WATCH OUT
-//   // Sets the trigPin on HIGH state for 10 microseconds
-//   digitalWrite(trigPin, HIGH);
-//   delayMicroseconds(10);
-//   digitalWrite(trigPin, LOW);
-//   // Reads the echoPin, returns the sound wave travel time in microseconds
-//   distance_in = pulseIn(echoPin, HIGH) * 0.034 / 2 * 0.393701;
-//   return distance_in;
-// }
 
 
 
