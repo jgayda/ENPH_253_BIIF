@@ -4,6 +4,8 @@
 #include <Arduino.h>
 #include <stack>
 
+//#define TESTING 1
+
 #define THANOS
 //#define METHANOS
 
@@ -23,10 +25,10 @@
 #define DETECT_THRESHOLD PA_3
 #define TAPE_FOLLOWER_L PA_6
 #define TAPE_FOLLOWER_R PA_5
-#define LEFT_WHEEL_FWD PB_6
-#define LEFT_WHEEL_BKWD PB_7
-#define RIGHT_WHEEL_FWD PB_9
-#define RIGHT_WHEEL_BKWD PB_8
+#define LEFT_WHEEL_FWD PB_7
+#define LEFT_WHEEL_BKWD PB_6
+#define RIGHT_WHEEL_FWD PB_8
+#define RIGHT_WHEEL_BKWD PB_9
 
 //POST DETECTORS
 #define FORK_SENSOR_L PA_7
@@ -46,7 +48,7 @@
 #define FORK_ON_LEFT 1
 #define FORK_ON_RIGHT 2
 
-#define SPEED 250
+#define SPEED 4000
 #define LEFT  3
 #define RIGHT 4
 
@@ -58,7 +60,7 @@ extern bool forkPathCrossed;
 
 //SLAVE BLUE PILL
 #define SLAVE_ADDRESS 69;
-extern bool pingSlave; 
+extern bool pingSlave;
 
 //POINT COUNTER
 extern int stonesScored;

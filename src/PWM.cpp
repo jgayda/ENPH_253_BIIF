@@ -2,11 +2,11 @@
 #include <PWM.h>
 #include <sensors.h>
 
-
+float speedFactor = 0.35;
 
 /* driveMotor()
  *
- * Generates a PWM function to drive a motor using a forward motor pin and a backward motor pin.
+ * Generates a P M function to drive a motor using a forward motor pin and a backward motor pin.
  * For the sake of the wheel motor, this function directly interfaces with the rear H-Bridge.
  * @param : value - the voltage value mapped to bits to send to the motor to drive the appropriate speed
  *          forwardDrive - the pin that makes the wheel drive forwards when at a high value
@@ -14,12 +14,16 @@
  * @returns : inputSpeed - the speed that is being written to the motor
  */
 int driveMotor(uint32_t value, PinName forwardDrive, PinName backwardDrive){
-  int maxSpeed = SPEED;
-  int inputSpeed = (maxSpeed - (value))/2;
+  int inputSpeed = (SPEED - (value)) * speedFactor;
+  pwm_start(forwardDrive, 100000, SPEED, inputSpeed, 0);
+  pwm_start(backwardDrive, 100000, SPEED, 0, 0);
+  return inputSpeed;
+}
 
-  pwm_start(forwardDrive, 100000, maxSpeed, inputSpeed, 1);
-  pwm_start(backwardDrive, 100000, maxSpeed, 0, 1);
-
+int driveMotorIncrease(uint32_t value, PinName forwardDrive, PinName backwardDrive) {
+  int inputSpeed = (SPEED + value) * speedFactor;
+  pwm_start(forwardDrive, 100000, SPEED, inputSpeed, 0);
+  pwm_start(backwardDrive, 100000, SPEED, 0, 0);
   return inputSpeed;
 }
 
@@ -37,7 +41,7 @@ void stopRobot(){
 
 
 /* turnRobot()
- * 
+ *
  * Takes a direction as a variable and stops the correct side's motor so that the robot
  * turns in one direction
  * @param : direction - the direction to turn the motor

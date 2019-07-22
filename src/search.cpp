@@ -17,7 +17,7 @@ int detectDistance_cm(PinName trigPin, PinName echoPin);
 /* searchMode()
  *
  * Robot is actively following tape and looking for posts
- * POSSIBLE TRANSITION STATES: 
+ * POSSIBLE TRANSITION STATES:
  *      (1) searchMode - no fork detected, the robot continues to search
  *      (2) turnMode (left or right) - robot detects fork
  * @returns : setMode - the mode that the robot switches to post searchMode
@@ -36,14 +36,14 @@ int searchMode() {
     PinName trigPin;
     PinName echoPin;
 
-    if (error == 10) {
+    if (abs(error) < 5) {
         fork = detectFork();
         if(fork == FORK_ON_LEFT || fork == FORK_ON_RIGHT){
             Serial.println("I detected a fork");
             stopRobot();
             if(fork == FORK_ON_LEFT) {
-                // trigPin = TRIG_L;
-                // echoPin = ECHO_L;
+                trigPin = TRIG_L;
+                echoPin = ECHO_L;
                 direction = LEFT;
             }
             else {

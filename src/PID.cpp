@@ -2,8 +2,14 @@
 #include <sensors.h>
 
 //Values to tune for PID control
-float k_p = 0.13 * SPEED;
-float k_d= 4 * SPEED;
+
+// speed factor of 0.35
+// float k_p = 0.80 * SPEED;
+// float k_d = 0.19 * SPEED;
+
+//float k_p = 0.21 * SPEED;
+float k_p = 0.28 * SPEED;
+float k_d = 0.54 * SPEED;
 
 void PID_debugger(float error, float prevError, float dTime, float propor, float deriv);
 
@@ -24,20 +30,21 @@ float PID_compute (float error, float prevError, float dTime){
     float deriv = 0.0;
     if(dTime != 0){
         deriv = k_d * (error - prevError) / (dTime);
+        //deriv = k_d * (error - prevError) * dTime;
     }
 
     float propor = error * k_p;
     //Uncomment the next line for debugging purposes
     //PID_debugger(error, prevError, dTime, propor, deriv);
-    return (abs(propor + deriv) < SPEED) ? abs(propor + deriv) : SPEED;
+    return (abs(propor + deriv) < SPEED) ? abs(propor + deriv) : SPEED - 300;
 }
 
 
 
 /* PID_debugger()
- * 
+ *
  * Prints out all of our error values, and the calculated needed PID values
- * For debugging purposes only :) 
+ * For debugging purposes only :)
  * @param : error - the CURRENT measured error
  *          prevError - the previous DIFFERENT error value
  *          dTime - the difference in time between error and prevError

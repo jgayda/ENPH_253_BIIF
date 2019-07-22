@@ -14,6 +14,7 @@
 int followTape ();
 void startDriving ();
 int detectFork ();
+void printMotorVal(int error);
 
 extern volatile float left_reflect_memory,right_reflect_memory;
 extern unsigned long start_prev_error;

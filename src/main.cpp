@@ -13,8 +13,8 @@
 
 // TAPE FOLLOWER GLOBAL VARIABLE INITIALIZATION
 
-unsigned long start_prev_error = 0; //Errors should all be 0 initially since robot won't begin following 
-unsigned long start_curr_error = 0; //tape unless both TFL and TFR are on the tape :) 
+unsigned long start_prev_error = 0; //Errors should all be 0 initially since robot won't begin following
+unsigned long start_curr_error = 0; //tape unless both TFL and TFR are on the tape :)
 
 volatile int previousError = 0; //The immediate previous sensed error we recieved
 volatile int previousDiffError = 0; //The previous DIFFERENT error value that we were sensing
@@ -27,7 +27,7 @@ int initialTurn = RIGHT; //CHANGE FOR TEAM
 
 bool forkPathCrossed = false; // have we crossed the tape completely
 
-bool pingSlave = false; 
+bool pingSlave = false;
 
 void debugSensorReadings(int setMode);
 void exitModeAlerts(int setMode);
@@ -60,7 +60,7 @@ void setup() {
 
   //SET THRESHOLD
   float threshold = analogRead(DETECT_THRESHOLD);
-  
+
   //Do not uncomment before figuring out what the fuck is going on (the pins are weird )
   // // pinMode(ECHO_L, INPUT);
   //  pinMode(TRIG_L, OUTPUT);
@@ -77,8 +77,10 @@ void setup() {
       initialCondition++;
       Serial.println("Robot Initially off tape, please fix :)");
     }
-    counter++; 
+    counter++;
     if(counter % 10000 == 0) {
+      Serial.print("Threshold: ");
+      Serial.print(threshold);
       Serial.print("Left Sensor Value: ");
       Serial.print(analogRead(TAPE_FOLLOWER_L));
       Serial.print(" | Right Sensor Value: ");
@@ -87,6 +89,10 @@ void setup() {
   }
 
   //Start driving the robot forward once the initial conditions have been meet
+  pwm_start(LEFT_WHEEL_FWD, 100000, SPEED, 0, 1);
+  pwm_start(RIGHT_WHEEL_FWD, 100000, SPEED, 0, 1);
+  pwm_start(LEFT_WHEEL_BKWD, 100000, SPEED, 0, 1);
+  pwm_start(RIGHT_WHEEL_BKWD, 100000, SPEED, 0, 1);
   startDriving();
   Serial.println("Setup Completed");
 }
@@ -96,7 +102,9 @@ void setup() {
 //MAIN STATE SWITCH BOX
 void loop() {
   //To see the values for all of the sensors, uncomment the next line
+  #ifdef TESTING
   //debugSensorReadings(setMode);
+  #endif
   switch (setMode) {
     case SEARCH:
       setMode = searchMode();
@@ -117,10 +125,16 @@ void loop() {
       //setMode = defenseMode();
       break;
     case TURN_L:
-     setMode = turnMode(TURN_L);
-      break;
+     //setMode = turnMode(TURN_L);
+     Serial.println("Found fork on the left, turning to left");
+     delay(4000);
+     setMode = SEARCH;
+     break;
     case TURN_R:
-      setMode = turnMode(TURN_R);
+      Serial.println("Found fork on the right, turning to right");
+      delay(4000);
+      setMode = SEARCH;
+      //setMode = turnMode(TURN_R);
       // Serial.println("Turning Right");
       // turnRobot(RIGHT);
       // delay(2000);
@@ -137,7 +151,7 @@ void loop() {
 /* debugSensorReadings()
  *
  * Prints out the sensor readings for all of the QRD sensors on the front of the robot
- * For debugging purposes only :) 
+ * For debugging purposes only :)
  * @param : setMode - the current mode/state of the robot
  */
 void debugSensorReadings(int setMode) {
@@ -158,11 +172,11 @@ void debugSensorReadings(int setMode) {
 
 
 /* exitModeAlerts()
- * 
+ *
  * Prints the mode that the robot exited the loop with
- * For debugging purposes only :) 
+ * For debugging purposes only :)
  * @param : setMode - the current mode/state of the robot
- */ 
+ */
 void exitModeAlerts(int setMode) {
   Serial.print("Exited with mode: ");
   Serial.println(setMode);

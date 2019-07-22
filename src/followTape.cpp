@@ -17,7 +17,7 @@ int motorVal_R=0;
 
 
 /* startDriving()
- * 
+ *
  * Starts driving the robot by writing max speed (SPEED) to both of the motors
  */
 void startDriving () {
@@ -32,7 +32,7 @@ void startDriving () {
 
 
 /* followTape()
- * 
+ *
  * Follows the tape, computes the position error of the robot relative to the tape, and makes
  * necessary corrections to its motor values using PID to ensure that the robot remains on the tape
  *    Robot Position State: LAST ON RIGHT  |  OFF ON LEFT  |  ON TAPE  |  OFF ON RIGHT  |  LAST ON LEFT
@@ -58,53 +58,43 @@ int followTape() {
   }
 
   PIDValue = PID_compute(error, previousDiffError, dt);
-  // Serial.print("PID Value: ");
-  // Serial.print(PIDValue);
+
 
   //BOTH ON TAPE
   if(error == 0){
     motorVal_L = driveMotor(PIDValue, LEFT_WHEEL_FWD, LEFT_WHEEL_BKWD);
     motorVal_R = driveMotor(PIDValue, RIGHT_WHEEL_FWD, RIGHT_WHEEL_BKWD);
-    Serial.print("BOTH ON | MotorVal_L: ");
-    Serial.print(motorVal_L);
-    Serial.print(" MotorVal_R: ");
-    Serial.println(motorVal_R);
    }
   //RIGHT ON TAPE, LEFT OFF TAPE --> TURN RIGHT
   else if(error == -1){
     motorVal_R = driveMotor(PIDValue, RIGHT_WHEEL_FWD, RIGHT_WHEEL_BKWD);
-    Serial.print("LEFT OFF | MotorVal_L: ");
-    Serial.print(motorVal_L);
-    Serial.print(" MotorVal_R: ");
-    Serial.println(motorVal_R);
+    motorVal_L = driveMotorIncrease(PIDValue, LEFT_WHEEL_FWD, LEFT_WHEEL_BKWD);
   }
   //LEFT ON TAPE, RIGHT OFF TAPE --> TURN LEFT
   else if(error == 1){
     motorVal_L = driveMotor(PIDValue, LEFT_WHEEL_FWD, LEFT_WHEEL_BKWD);
-    Serial.print("RIGHT OFF | MotorVal_L: ");
-    Serial.print(motorVal_L);
-    Serial.print(" MotorVal_R: ");
-    Serial.println(motorVal_R);
+    motorVal_R = driveMotorIncrease(PIDValue, RIGHT_WHEEL_FWD, RIGHT_WHEEL_BKWD);
   }
   //LAST KNOWN LOCATION ON RIGHT --> TURN LEFT
   else if(error == -5){
     motorVal_R = driveMotor(PIDValue, RIGHT_WHEEL_FWD, RIGHT_WHEEL_BKWD);
-    Serial.print("LAST ON RIGHT | MotorVal_L: ");
-    Serial.print(motorVal_L);
-    Serial.print(" MotorVal_R: ");
-    Serial.println(motorVal_R);
+    motorVal_L = driveMotorIncrease(PIDValue, LEFT_WHEEL_FWD, LEFT_WHEEL_BKWD);
   }
   //LAST KNOWN LOCATION ON LEFT --> TURN RIGHT
   else if (error == 5){
       motorVal_L = driveMotor(PIDValue, LEFT_WHEEL_FWD, LEFT_WHEEL_BKWD);
-      Serial.print("LAST ON LEFT | MotorVal_L: ");
-      Serial.print(motorVal_L);
-      Serial.print(" MotorVal_R: ");
-      Serial.println(motorVal_R);
+      motorVal_R = driveMotorIncrease(PIDValue, RIGHT_WHEEL_FWD, RIGHT_WHEEL_BKWD);
   }
   else{
-    Serial.println("No valid error detected");
+    // Serial.println("No valid error detected");
   }
+  #ifdef TESTING
+    if(millis() % 1000 == 0){
+      printMotorVal(error); //DEBUG
+    }
+  #endif
+
+
 
   //update sensor memory
   if(left_reflect == 1 || right_reflect == 1 ){
@@ -117,10 +107,50 @@ int followTape() {
     return error;
 }
 
+void printMotorVal (int error) {
+  Serial.print("PID Value: ");
+  Serial.print(PIDValue);
+    //BOTH ON TAPE
+  if(error == 0){
+    Serial.print("BOTH ON | MotorVal_L: ");
+    Serial.print(motorVal_L);
+    Serial.print(" MotorVal_R: ");
+    Serial.println(motorVal_R);
+   }
+  //RIGHT ON TAPE, LEFT OFF TAPE --> TURN RIGHT
+  else if(error == -1){
+    Serial.print("LEFT OFF | MotorVal_L: ");
+    Serial.print(motorVal_L);
+    Serial.print(" MotorVal_R: ");
+    Serial.println(motorVal_R);
+  }
+  //LEFT ON TAPE, RIGHT OFF TAPE --> TURN LEFT
+  else if(error == 1){
+    Serial.print("RIGHT OFF | MotorVal_L: ");
+    Serial.print(motorVal_L);
+    Serial.print(" MotorVal_R: ");
+    Serial.println(motorVal_R);
+  }
+  //LAST KNOWN LOCATION ON RIGHT --> TURN LEFT
+  else if(error == -5){
+    Serial.print("LAST ON RIGHT | MotorVal_L: ");
+    Serial.print(motorVal_L);
+    Serial.print(" MotorVal_R: ");
+    Serial.println(motorVal_R);
+  }
+  //LAST KNOWN LOCATION ON LEFT --> TURN RIGHT
+  else if (error == 5){
+      Serial.print("LAST ON LEFT | MotorVal_L: ");
+      Serial.print(motorVal_L);
+      Serial.print(" MotorVal_R: ");
+      Serial.println(motorVal_R);
+  }
+
+}
 
 
 /* detectFork()
- * 
+ *
  * Checks to see if there is a fork on either side of the robot BUT ONLY if the robot
  * has an error of 0 to ensure our confidence on whether or not the robot actually sees a fork
  * @return : FORK_STATUS - Can be:
