@@ -8,7 +8,6 @@
 #include <followTape.h>
 #include <PWM.h>
 
-int detectFork();
 void printSonarValues(int trigPin, int echoPin);
 int detectDistance_cm(int trigPin, int echoPin);
 
@@ -44,11 +43,12 @@ int searchMode() {
     int trigPin;
     int echoPin; 
 
-    #ifdef TESTING_FORK
-    printSonarValues(TRIG_R,ECHO_R);
-    #endif
+    // #ifdef TESTING_FORK
+    // printSonarValues(TRIG_R,ECHO_R);
+    // #endif
 
     if (abs(error) < 5) {
+
         fork = detectFork();
         //Serial.println(firstFork);
         // if((fork == FORK_ON_LEFT || fork == FORK_ON_RIGHT) && passedFakeFork == false){
@@ -65,8 +65,15 @@ int searchMode() {
         //     #endif 
         //     return SEARCH;
         // }
+        #ifdef TESTING_FORK
+                Serial.print("in search mode: fork val: ");
+                Serial.println(fork);
+         #endif
         if(fork == FORK_ON_LEFT && passedFakeFork == true) {
             stopRobot();
+        #ifdef TESTING_FORK
+                Serial.print("I detected a fork on the left");
+         #endif
             //Serial.println("I detected a fork on the left");
             trigPin = TRIG_L;
             echoPin = ECHO_L;
@@ -90,6 +97,9 @@ int searchMode() {
             return TURN_L; 
         } else if(fork == FORK_ON_RIGHT && passedFakeFork == true) {
             stopRobot();
+            #ifdef TESTING_FORK
+                Serial.print("I detected a fork on the right");
+             #endif
             //Serial.println("I detected a fork on the right");
             trigPin = TRIG_R;
             echoPin = ECHO_R;

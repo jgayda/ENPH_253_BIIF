@@ -28,7 +28,7 @@ int turnMode (int direction) {
         Serial.println(rightSensor);
         Serial.print("left sensor:");
         Serial.println(leftSensor);
-        Serial.println("forkSensor:");
+        Serial.print("forkSensor:");
         Serial.println(forkSensor);
     #endif
 

@@ -136,11 +136,13 @@ void loop() {
     case TURN_L:
      //setMode = turnMode(TURN_L);
      //Serial.println("Found fork on the left, turning to left");
+     delay(1000);
      setMode = turnMode(TURN_L);
      //setMode = SEARCH;
      break;
     case TURN_R:
       //Serial.println("Found fork on the right, turning to right");
+      delay(1000);
       setMode = turnMode(TURN_R);
       break;
   }
