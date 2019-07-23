@@ -32,7 +32,13 @@ bool pingSlave = false;
 void debugSensorReadings(int setMode);
 void exitModeAlerts(int setMode);
 
+int numFork = 0;
+int TEAM = METHANOS;
 
+const int TRIG_R = PB12;
+const int ECHO_R = PB13;
+const int TRIG_L = PB14;
+const int ECHO_L = PB15;
 
 void setup() {
 
@@ -64,10 +70,13 @@ void setup() {
   //Do not uncomment before figuring out what the fuck is going on (the pins are weird )
   // // pinMode(ECHO_L, INPUT);
   //  pinMode(TRIG_L, OUTPUT);
-  // // pinMode(ECHO_R, INPUT);
-  //  pinMode(TRIG_R,OUTPUT);
+   pinMode(ECHO_R, INPUT);
+   pinMode(TRIG_R, OUTPUT);
 
-  //TODO: Add function that initially checks what team we are on
+  //TODO: SWTICH IS OPEN CHANGE TEAM TO THANOS
+  if(false) {
+    TEAM = THANOS;
+  }
 
   //Check to see if robot is initially on tape
   int initialCondition = 0;
@@ -103,7 +112,7 @@ void setup() {
 void loop() {
   //To see the values for all of the sensors, uncomment the next line
   #ifdef TESTING
-  //debugSensorReadings(setMode);
+  debugSensorReadings(setMode);
   #endif
   switch (setMode) {
     case SEARCH:
@@ -126,20 +135,13 @@ void loop() {
       break;
     case TURN_L:
      //setMode = turnMode(TURN_L);
-     Serial.println("Found fork on the left, turning to left");
-     delay(4000);
-     setMode = SEARCH;
+     //Serial.println("Found fork on the left, turning to left");
+     setMode = turnMode(TURN_L);
+     //setMode = SEARCH;
      break;
     case TURN_R:
-      Serial.println("Found fork on the right, turning to right");
-      delay(4000);
-      setMode = SEARCH;
-      //setMode = turnMode(TURN_R);
-      // Serial.println("Turning Right");
-      // turnRobot(RIGHT);
-      // delay(2000);
-      // stopRobot();
-      // setMode = DEPOSIT;
+      //Serial.println("Found fork on the right, turning to right");
+      setMode = turnMode(TURN_R);
       break;
   }
   //To debug and see the mode that the robot exited with, uncomment the next line

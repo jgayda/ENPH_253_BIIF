@@ -47,11 +47,13 @@ void stopRobot(){
  * @param : direction - the direction to turn the motor
  */
 void turnRobot(int direction) {
-  if (direction == RIGHT){
+  if (direction == TURN_R){
+    driveMotor(0,LEFT_WHEEL_FWD,LEFT_WHEEL_BKWD);
     driveMotor(SPEED, RIGHT_WHEEL_FWD, RIGHT_WHEEL_BKWD ); //stop the wheel
   }
   else {
     driveMotor(SPEED, LEFT_WHEEL_FWD, LEFT_WHEEL_BKWD ); //stop the wheel
+    driveMotor(0,RIGHT_WHEEL_FWD,RIGHT_WHEEL_BKWD);
   }
 }
 

@@ -88,6 +88,7 @@ int followTape() {
   else{
     // Serial.println("No valid error detected");
   }
+
   #ifdef TESTING
     if(millis() % 1000 == 0){
       printMotorVal(error); //DEBUG
@@ -159,10 +160,16 @@ void printMotorVal (int error) {
  *                      (2) FORK_ON_RIGHT
  */
 int detectFork () {
-  Serial.print("Left Fork Sensor: ");
+  
   int FSL_reflectance = getReflectance(FORK_SENSOR_L,threshold);
-  Serial.print("Right Fork Sensor: ");
   int FSR_reflectance = getReflectance(FORK_SENSOR_R,threshold);
+
+  #ifdef TESTING
+  Serial.print("Left Fork Sensor: ");
+  Serial.print(analogRead(FSL_reflectance));
+  Serial.print (" Right Fork Sensor: ");
+  Serial.println(analogRead(FSR_reflectance));
+  #endif 
 
   if (FSL_reflectance == 1) {
     return FORK_ON_LEFT;

@@ -3,4 +3,6 @@
 
 int searchMode();
 
+extern bool firstFork;
+
 #endif
