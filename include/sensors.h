@@ -4,9 +4,8 @@
 #include <Arduino.h>
 #include <stack>
 
-//#define TESTING 1
-//
-//#define TESTING_FORK 2
+ #define TESTING 1
+ #define TESTING_FORK 2
 
 /*Thanos starts from the right side of the course
  *  1) The first fork we will detect will be the safe storage marker and will be on the LEFT (ignore this)
@@ -17,7 +16,7 @@
 /*Methanos starts from the left side of the course
  *  1) The first fork we will detect will be the safe storage marker and will be on the RIGHT (ignore this)
  *  2) The next fork we will detect will be the fork between the safe storage and the rest of the course,
- *     we will want to take another RIGHT and then we will arrive at our home fork 
+ *     we will want to take another RIGHT and then we will arrive at our home fork
  */
 #define METHANOS 20
 //TEAM
@@ -34,6 +33,8 @@ extern int TEAM;
 #define DEFENSE 7
 #define TURN_L 8
 #define TURN_R 9
+#define TURN_L_180 10
+#define TURN_R_180 11
 
 //TAPE FOLLOWER
 #define DETECT_THRESHOLD PA_3

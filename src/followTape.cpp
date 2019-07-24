@@ -160,16 +160,16 @@ void printMotorVal (int error) {
  *                      (2) FORK_ON_RIGHT
  */
 int detectFork () {
-  
-  int FSL_reflectance = getReflectance(FORK_SENSOR_L,threshold + 150);
-  int FSR_reflectance = getReflectance(FORK_SENSOR_R,threshold + 150);
+
+  int FSL_reflectance = getReflectance(FORK_SENSOR_L,threshold + 70 );
+  int FSR_reflectance = getReflectance(FORK_SENSOR_R,threshold  + 70);
 
   #ifdef TESTING
   Serial.print("Left Fork Sensor: ");
   Serial.print(analogRead(FSL_reflectance));
   Serial.print (" Right Fork Sensor: ");
   Serial.println(analogRead(FSR_reflectance));
-  #endif 
+  #endif
 
   if (FSL_reflectance == 1) {
     return FORK_ON_LEFT;

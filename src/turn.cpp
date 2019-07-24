@@ -5,22 +5,27 @@
 
 
 int turnMode (int direction) {
+    turnRobot(direction);
+
     int forkSensor = 0;
     int threshold = analogRead(DETECT_THRESHOLD);
-    int leftSensor = getReflectance(TAPE_FOLLOWER_L,threshold);
-    int rightSensor = getReflectance(TAPE_FOLLOWER_R,threshold);
-    
+
+
     if (direction == TURN_L){
       forkSensor = getReflectance(FORK_SENSOR_R,threshold);
     }
     else {
       forkSensor = getReflectance(FORK_SENSOR_L,threshold);
     }
-    turnRobot(direction);
-    if(forkSensor == 1 && forkPathCrossed ==false){
+    if(forkSensor == 1 && forkPathCrossed == false){
         //Serial.println("WE CROSSED");
         forkPathCrossed = true;
     }
+
+
+    // &&
+    int leftSensor = getReflectance(TAPE_FOLLOWER_L,threshold);
+    int rightSensor = getReflectance(TAPE_FOLLOWER_R,threshold);
     #ifdef TESTING_FORK
         Serial.print("fork path crossed:");
         Serial.println(forkPathCrossed);
@@ -31,8 +36,7 @@ int turnMode (int direction) {
         Serial.print("forkSensor:");
         Serial.println(forkSensor);
     #endif
-
-    if(forkPathCrossed == true && rightSensor == 1 && leftSensor == 1 && forkSensor == 0){
+    if(forkPathCrossed == true && (rightSensor == 1 || leftSensor == 1) && forkSensor == 0){
         //Serial.println("from turn mode back to search mode");
         forkPathCrossed = false;
         return SEARCH;
@@ -47,6 +51,7 @@ int turnMode (int direction) {
         //     }
         return direction;
     }
+
 
 
 

@@ -8,6 +8,7 @@
 #include <search.h>
 #include <approach.h>
 #include <turn.h>
+#include <turn180.h>
 #include <sensors.h>
 #include <followTape.h>
 
@@ -35,10 +36,10 @@ void exitModeAlerts(int setMode);
 int numFork = 0;
 int TEAM = METHANOS;
 
-const int TRIG_R = PB12;
-const int ECHO_R = PB13;
-const int TRIG_L = PB14;
-const int ECHO_L = PB15;
+const int TRIG_R = PB14;
+const int ECHO_R = PB15;
+const int TRIG_L = PB13;
+const int ECHO_L = PB12;
 
 void setup() {
 
@@ -68,8 +69,8 @@ void setup() {
   float threshold = analogRead(DETECT_THRESHOLD);
 
   //Do not uncomment before figuring out what the fuck is going on (the pins are weird )
-  // // pinMode(ECHO_L, INPUT);
-  //  pinMode(TRIG_L, OUTPUT);
+   pinMode(ECHO_L, INPUT);
+   pinMode(TRIG_L, OUTPUT);
    pinMode(ECHO_R, INPUT);
    pinMode(TRIG_R, OUTPUT);
 
@@ -89,7 +90,7 @@ void setup() {
     counter++;
     if(counter % 10000 == 0) {
       Serial.print("Threshold: ");
-      Serial.print(threshold);
+      Serial.print(analogRead(DETECT_THRESHOLD));
       Serial.print("Left Sensor Value: ");
       Serial.print(analogRead(TAPE_FOLLOWER_L));
       Serial.print(" | Right Sensor Value: ");
@@ -127,6 +128,10 @@ void loop() {
     case PATHFINDER:
       //setMode = pathfinderMode();
       break;
+    case RETURN:
+      //setMode = returnMode();
+      stopRobot();
+      break;
     case DEPOSIT:
       //setMode = depositMode();
       break;
@@ -136,15 +141,22 @@ void loop() {
     case TURN_L:
      //setMode = turnMode(TURN_L);
      //Serial.println("Found fork on the left, turning to left");
-     delay(1000);
+     //delay(1000);
      setMode = turnMode(TURN_L);
      //setMode = SEARCH;
      break;
     case TURN_R:
       //Serial.println("Found fork on the right, turning to right");
-      delay(1000);
+      //delay(1000);
       setMode = turnMode(TURN_R);
       break;
+    case TURN_L_180:
+      setMode = turn180Robot(TURN_L_180);
+      break;
+    case TURN_R_180:
+      setMode = turn180Robot(TURN_R_180);
+      break;
+
   }
   //To debug and see the mode that the robot exited with, uncomment the next line
   //exitModeAlerts(setMode);

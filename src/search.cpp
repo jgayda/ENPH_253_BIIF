@@ -41,43 +41,33 @@ int searchMode() {
     // PinName echoPin;
 
     int trigPin;
-    int echoPin; 
+    int echoPin;
 
-    // #ifdef TESTING_FORK
-    // printSonarValues(TRIG_R,ECHO_R);
-    // #endif
+    #ifdef TESTING_FORK
+        printSonarValues(TRIG_L,ECHO_L);
+    #endif
 
     if (abs(error) < 5) {
 
         fork = detectFork();
-        //Serial.println(firstFork);
-        // if((fork == FORK_ON_LEFT || fork == FORK_ON_RIGHT) && passedFakeFork == false){
-        //     fakeFork = true;
-        //     #ifdef TESTING_FORK
-        //      Serial.println("I detected my first fork!!!");
-        //     #endif 
-        //     return SEARCH;
-        // }
-        // if(fakeFork == true && fork == NO_FORK && passedFakeFork == false) {
-        //     passedFakeFork = true;
-        //     #ifdef TESTING_FORK
-        //      Serial.println("passed fake fork");
-        //     #endif 
-        //     return SEARCH;
-        // }
+
         #ifdef TESTING_FORK
                 Serial.print("in search mode: fork val: ");
                 Serial.println(fork);
          #endif
+
         if(fork == FORK_ON_LEFT && passedFakeFork == true) {
             stopRobot();
+
         #ifdef TESTING_FORK
-                Serial.print("I detected a fork on the left");
+                Serial.print("I detected a fork on the left with: ");
+                Serial.print(analogRead(FORK_SENSOR_L));
          #endif
+
             //Serial.println("I detected a fork on the left");
             trigPin = TRIG_L;
             echoPin = ECHO_L;
-            direction = LEFT;  
+            direction = LEFT;
             distance = detectDistance_cm(trigPin,echoPin);
             if(detectDistance_cm(trigPin, echoPin) <= DISTANCE_THRESH && detectDistance_cm(trigPin, echoPin) > 0) {
                 //You have detected a post on the LEFT, lets now begin to retrieve the stone!
@@ -88,17 +78,18 @@ int searchMode() {
                     Serial.println(distance);
                 #endif
                 delay(1000);
-                return SEARCH;
-            } 
+                return TURN_R_180;
+            }
             //} else {
-            //You have detected a regular fork on the left, lets check to see what team you are on 
+            //You have detected a regular fork on the left, lets check to see what team you are on
             //And decide which way to turn.
             numFork++;
-            return TURN_L; 
+            return TURN_L;
         } else if(fork == FORK_ON_RIGHT && passedFakeFork == true) {
             stopRobot();
             #ifdef TESTING_FORK
-                Serial.print("I detected a fork on the right");
+                Serial.print("I detected a fork on the right with: ");
+                Serial.print(analogRead(FORK_SENSOR_R));
              #endif
             //Serial.println("I detected a fork on the right");
             trigPin = TRIG_R;
@@ -114,12 +105,12 @@ int searchMode() {
                     Serial.println(distance);
                 #endif
                 delay(1000);
-                return SEARCH;
+                return TURN_L_180;
             }
             //} else {
                 //You have detected a regular fork on the right, lets check to see what team you are on
-                //And decide which way to turn. 
-            numFork++; 
+                //And decide which way to turn.
+            numFork++;
             #ifdef TESTING_FORK
                 Serial.print("TURNING, sonar distance: ");
                 Serial.println(distance);
@@ -153,11 +144,11 @@ int detectDistance_cm(int trigPin,int echoPin) {
 }
 
 void printSonarValues(int trigPin, int echoPin){
-    if(millis() % 1000 == 0){
+
         int distance =  detectDistance_cm(trigPin,echoPin);
         Serial.println("Sonar distance:");
         Serial.println(distance);
-    }
+
 
 
 }

@@ -57,3 +57,15 @@ void turnRobot(int direction) {
   }
 }
 
+void spinRobot180(int direction) {
+  if (direction == TURN_R){
+    driveMotor(0,LEFT_WHEEL_FWD,LEFT_WHEEL_BKWD);
+    driveMotor(0, RIGHT_WHEEL_BKWD, RIGHT_WHEEL_FWD ); //stop the wheel
+  }
+  else {
+    driveMotor(0, LEFT_WHEEL_BKWD, LEFT_WHEEL_FWD ); //stop the wheel
+    driveMotor(0,RIGHT_WHEEL_FWD,RIGHT_WHEEL_BKWD);
+  }
+}
+
+
