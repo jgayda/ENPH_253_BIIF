@@ -14,7 +14,7 @@ const int speed = SPEED;
 int motorVal_L=0;
 int motorVal_R=0;
 
-
+int nightTimeMode = 0;
 
 /* startDriving()
  *
@@ -90,9 +90,9 @@ int followTape() {
   }
 
   #ifdef TESTING
-    if(millis() % 1000 == 0){
+    //if(millis() % 1000 == 0){
       printMotorVal(error); //DEBUG
-    }
+    //}
   #endif
 
 
@@ -161,8 +161,8 @@ void printMotorVal (int error) {
  */
 int detectFork () {
 
-  int FSL_reflectance = getReflectance(FORK_SENSOR_L,threshold + 70 );
-  int FSR_reflectance = getReflectance(FORK_SENSOR_R,threshold  + 70);
+  int FSL_reflectance = getReflectance(FORK_SENSOR_L,threshold + nightTimeMode);
+  int FSR_reflectance = getReflectance(FORK_SENSOR_R,threshold  + nightTimeMode);
 
   #ifdef TESTING
   Serial.print("Left Fork Sensor: ");

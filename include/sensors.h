@@ -4,8 +4,8 @@
 #include <Arduino.h>
 #include <stack>
 
- #define TESTING 1
- #define TESTING_FORK 2
+//#define TESTING 1
+//#define TESTING_FORK 2
 
 /*Thanos starts from the right side of the course
  *  1) The first fork we will detect will be the safe storage marker and will be on the LEFT (ignore this)
@@ -38,16 +38,16 @@ extern int TEAM;
 
 //TAPE FOLLOWER
 #define DETECT_THRESHOLD PA_3
-#define TAPE_FOLLOWER_L PA_6
-#define TAPE_FOLLOWER_R PA_5
+#define TAPE_FOLLOWER_L PA_5
+#define TAPE_FOLLOWER_R PA_6
 #define LEFT_WHEEL_FWD PB_7
 #define LEFT_WHEEL_BKWD PB_6
 #define RIGHT_WHEEL_FWD PB_8
 #define RIGHT_WHEEL_BKWD PB_9
 
 //POST DETECTORS
-#define FORK_SENSOR_L PA_7
-#define FORK_SENSOR_R PA_4
+#define FORK_SENSOR_L PA_4
+#define FORK_SENSOR_R PA_7
 
 //SONAR
 // #define ECHO_L PB_3

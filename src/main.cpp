@@ -4,13 +4,16 @@
 #include <time.h>
 #include <math.h>
 #include <Adafruit_SSD1306.h>
+#include <stack>
 
 #include <search.h>
 #include <approach.h>
+#include <return.h>
 #include <turn.h>
 #include <turn180.h>
 #include <sensors.h>
 #include <followTape.h>
+#include <strategy.h>
 
 // TAPE FOLLOWER GLOBAL VARIABLE INITIALIZATION
 
@@ -35,6 +38,8 @@ void exitModeAlerts(int setMode);
 
 int numFork = 0;
 int TEAM = METHANOS;
+
+std :: stack <int> forkHistory;
 
 const int TRIG_R = PB14;
 const int ECHO_R = PB15;
@@ -78,6 +83,8 @@ void setup() {
   if(false) {
     TEAM = THANOS;
   }
+
+  initializeStrategy(TEAM);
 
   //Check to see if robot is initially on tape
   int initialCondition = 0;
@@ -129,8 +136,8 @@ void loop() {
       //setMode = pathfinderMode();
       break;
     case RETURN:
-      //setMode = returnMode();
       stopRobot();
+      setMode = returnMode();
       break;
     case DEPOSIT:
       //setMode = depositMode();

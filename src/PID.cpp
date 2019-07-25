@@ -4,12 +4,18 @@
 //Values to tune for PID control
 
 // speed factor of 0.35
-// float k_p = 0.80 * SPEED;
-// float k_d = 0.19 * SPEED;
 
-//float k_p = 0.21 * SPEED;
-float k_p = 0.28 * SPEED;
-float k_d = 0.54 * SPEED;
+//WITHOUT the arm works fine on the posts
+// float k_p = 0.28 * SPEED;
+// float k_d = 0.54 * SPEED;
+
+float k_p = 0.27 * SPEED;
+float k_d = 0.58 * SPEED;
+
+// float k_p = 0.33* SPEED;
+// float k_d = 0.52 * SPEED;
+
+
 
 void PID_debugger(float error, float prevError, float dTime, float propor, float deriv);
 

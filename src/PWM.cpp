@@ -2,7 +2,7 @@
 #include <PWM.h>
 #include <sensors.h>
 
-float speedFactor = 0.35;
+float speedFactor = 0.30;
 
 /* driveMotor()
  *
@@ -49,11 +49,13 @@ void stopRobot(){
 void turnRobot(int direction) {
   if (direction == TURN_R){
     driveMotor(0,LEFT_WHEEL_FWD,LEFT_WHEEL_BKWD);
-    driveMotor(SPEED, RIGHT_WHEEL_FWD, RIGHT_WHEEL_BKWD ); //stop the wheel
+    //driveMotor(SPEED, RIGHT_WHEEL_FWD, RIGHT_WHEEL_BKWD ); //stop the wheel
+    driveMotor(0,RIGHT_WHEEL_BKWD,RIGHT_WHEEL_FWD);
   }
   else {
     driveMotor(SPEED, LEFT_WHEEL_FWD, LEFT_WHEEL_BKWD ); //stop the wheel
-    driveMotor(0,RIGHT_WHEEL_FWD,RIGHT_WHEEL_BKWD);
+    //driveMotor(0,RIGHT_WHEEL_FWD,RIGHT_WHEEL_BKWD);
+    driveMotor(0,LEFT_WHEEL_BKWD,LEFT_WHEEL_FWD);
   }
 }
 
