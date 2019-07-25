@@ -6,6 +6,7 @@
 
 //#define TESTING 1
 //#define TESTING_FORK 2
+//#define FORK_HISTORY_TEST 3
 
 /*Thanos starts from the right side of the course
  *  1) The first fork we will detect will be the safe storage marker and will be on the LEFT (ignore this)
@@ -69,7 +70,7 @@ extern const int TRIG_L;
 #define FORK_ON_LEFT 1
 #define FORK_ON_RIGHT 2
 
-extern int numFork;
+extern int numForksTaken; //number of seen forks in total
 
 #define SPEED 4000
 #define LEFT  3
@@ -80,6 +81,7 @@ extern std :: stack <int> forkHistory;
 extern int storageDirection;
 extern int initialTurn;
 extern bool forkPathCrossed;
+extern int forksInPath; //number of forks in one strategy
 
 //SLAVE BLUE PILL
 #define SLAVE_ADDRESS 69;

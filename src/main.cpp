@@ -36,10 +36,13 @@ bool pingSlave = false;
 void debugSensorReadings(int setMode);
 void exitModeAlerts(int setMode);
 
-int numFork = 0;
+int numForksTaken = 0;
+int forksInPath = 0;
 int TEAM = METHANOS;
 
+//course navigation
 std :: stack <int> forkHistory;
+int currentPostMap[10] = {0};
 
 const int TRIG_R = PB14;
 const int ECHO_R = PB15;
@@ -84,7 +87,8 @@ void setup() {
     TEAM = THANOS;
   }
 
-  initializeStrategy(TEAM);
+  forksInPath = initializeStrategy(TEAM);
+
 
   //Check to see if robot is initially on tape
   int initialCondition = 0;
@@ -130,6 +134,7 @@ void loop() {
       //setMode = approachMode();
       break;
     case RETRIEVE:
+      stopRobot();
       //setMode = retrieveMode();
       break;
     case PATHFINDER:

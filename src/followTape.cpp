@@ -14,7 +14,7 @@ const int speed = SPEED;
 int motorVal_L=0;
 int motorVal_R=0;
 
-int nightTimeMode = 0;
+int nightTimeMode = 50;
 
 /* startDriving()
  *

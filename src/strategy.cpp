@@ -2,11 +2,14 @@
 #include <sensors.h>
 
 const int methanos_turnOrder_post1 [3] = {RIGHT,LEFT,LEFT};
-const int thanos_turnOrder_post1 [] = {LEFT,RIGHT,RIGHT};
+const int thanos_turnOrder_post1 [3] = {LEFT,RIGHT,RIGHT};
 
-void initializeStrategy(int TEAM) {
-    int size = sizeof(thanos_turnOrder_post1);
-    int currentPostMap[size] = {0};
+
+
+int initializeStrategy(int TEAM) {
+    int size = sizeof(thanos_turnOrder_post1)/sizeof(thanos_turnOrder_post1[0]);
+
+
     if(TEAM == THANOS) {
         for (int i = 0; i < 3; i ++) {
             currentPostMap[i] = thanos_turnOrder_post1[i];
@@ -16,4 +19,6 @@ void initializeStrategy(int TEAM) {
             currentPostMap[i] = methanos_turnOrder_post1[i];
         }
     }
+
+    return size;
 }

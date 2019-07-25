@@ -5,8 +5,8 @@ extern const int methanos_turnOrder_post1 [3];
 extern const int thanos_turnOrder_post1 [3];
 // extern const int thanos_turnOrder_post2 [] = {LEFT,LEFT,LEFT};
 
-extern int currentPostMap[];
+extern int currentPostMap[10];
 
 
 
-void initializeStrategy(int TEAM);
+int initializeStrategy(int TEAM); // returns the array size of the strategy
