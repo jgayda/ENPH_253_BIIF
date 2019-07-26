@@ -2,7 +2,7 @@
 #include <PWM.h>
 #include <sensors.h>
 
-float speedFactor = 0.30;
+
 
 /* driveMotor()
  *

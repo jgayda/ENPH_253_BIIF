@@ -14,7 +14,7 @@ const int speed = SPEED;
 int motorVal_L=0;
 int motorVal_R=0;
 
-int nightTimeMode = 50;
+int nightTimeMode = 300;
 
 /* startDriving()
  *
@@ -161,7 +161,7 @@ void printMotorVal (int error) {
  */
 int detectFork () {
 
-  int FSL_reflectance = getReflectance(FORK_SENSOR_L,threshold + nightTimeMode);
+  int FSL_reflectance = getReflectance(FORK_SENSOR_L,threshold + nightTimeMode + 705); //CHANGE
   int FSR_reflectance = getReflectance(FORK_SENSOR_R,threshold  + nightTimeMode);
 
   #ifdef TESTING

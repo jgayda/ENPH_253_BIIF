@@ -8,6 +8,7 @@
 #include <followTape.h>
 #include <PWM.h>
 #include <strategy.h>
+#include <timer.h>
 
 void printSonarValues(int trigPin, int echoPin);
 int detectDistance_cm(int trigPin, int echoPin);
@@ -25,10 +26,13 @@ int detectDistance_cm(int trigPin, int echoPin);
  * @returns : setMode - the mode that the robot switches to post searchMode
  */
 int searchMode() {
+    if(forkHistory.size() > 0) {
+        speedFactor = 0.18;
+    }
     int direction =0;
     int distance = DISTANCE_THRESH + 10 ;
     int fork = NO_FORK;
-    int error = 1000;
+    int error = 10;
 
 
     if(fork == NO_FORK){
@@ -58,39 +62,14 @@ int searchMode() {
         #endif
 
         if(fork == FORK_ON_LEFT) {
+            stopRobot();
+            digitalWrite(RIGHT_FORK_LED,HIGH);
+            ledTimer = millis();
+            direction = LEFT;
             #ifdef TESTING_FORK
                 Serial.print("I detected a fork on the left with: ");
                 Serial.print(analogRead(FORK_SENSOR_L));
              #endif
-            direction = LEFT;
-            stopRobot();
-            #ifdef FORK_HISTORY_TEST
-                Serial.print(forksInPath);
-                Serial.print("Current Fork Map: ");
-                for (int i=0; i<forksInPath; i++) {
-                    Serial.print(currentPostMap[i]);
-                    Serial.print(" ");
-                }
-                Serial.print(" | Number of Forks Taken: ");
-                Serial.print(forkHistory.size());
-                Serial.print(" Last Fork We took: ");
-                Serial.println(forkHistory.top());
-            #endif
-            int nextTurn = currentPostMap[numForksTaken];
-            int forkNumber  = forkHistory.size();
-            if(forkHistory.size() == forksInPath - 1){
-                return RETRIEVE;
-            }
-            numForksTaken ++;
-
-            if(direction == nextTurn) {
-                forkHistory.push(LEFT);
-                return TURN_L;
-            } else {
-                forkHistory.push(RIGHT);
-                followTape();
-                return SEARCH;
-            }
 
             //Serial.println("I detected a fork on the left");
             trigPin = TRIG_L;
@@ -111,9 +90,45 @@ int searchMode() {
             //} else {
             //You have detected a regular fork on the left, lets check to see what team you are on
             //And decide which way to turn.
-            //return TURN_L;
+            //return TURN_Ll
+
+            #ifdef FORK_HISTORY_TEST
+                Serial.print(forksInPath);
+                Serial.print("Current Fork Map: ");
+                for (int i=0; i<forksInPath; i++) {
+                    Serial.print(currentPostMap[i]);
+                    Serial.print(" ");
+                }
+                Serial.print(" | Number of Forks Taken: ");
+                Serial.print(forkHistory.size());
+                Serial.print(" Last Fork We took: ");
+                Serial.println(forkHistory.top());
+            #endif
+
+            int nextTurn = currentPostMap[numForksTaken];
+            int forkNumber  = forkHistory.size();
+            if(forkHistory.size() == forksInPath - 1){
+                stopRobot();
+                postLineUpTimer = millis();
+                return RETRIEVE;
+            }
+            numForksTaken ++;
+
+            if(direction == nextTurn) {
+                forkHistory.push(LEFT);
+                return TURN_L;
+            } else {
+                forkHistory.push(RIGHT);
+                //turnRobot(TURN_R);
+                return TURN_R;
+            }
+
         } else if(fork == FORK_ON_RIGHT) {
             stopRobot();
+            digitalWrite(RIGHT_FORK_LED,HIGH);
+            ledTimer = millis();
+
+            direction = RIGHT;
             #ifdef TESTING_FORK
                 Serial.print("I detected a fork on the right with: ");
                 Serial.print(analogRead(FORK_SENSOR_R));
@@ -122,7 +137,6 @@ int searchMode() {
 
             trigPin = TRIG_R;
             echoPin = ECHO_R;
-            direction = RIGHT;
             distance = detectDistance_cm(trigPin,echoPin);
             // if(detectDistance_cm(trigPin, echoPin) <= DISTANCE_THRESH   && detectDistance_cm(trigPin, echoPin) > 0) {
             //     //You have detected a post on the RIGHT, lets now begin to retrieve the stone!
@@ -156,7 +170,9 @@ int searchMode() {
                 Serial.println(forkHistory.top());
             #endif
             int nextTurn = currentPostMap[numForksTaken];
-            if(forkHistory.size() == forksInPath - 1){
+            if(forkHistory.size() == forksInPath - 1 ){
+                stopRobot();
+                postLineUpTimer = millis();
                 return RETRIEVE;
             }
             numForksTaken ++;
@@ -165,8 +181,8 @@ int searchMode() {
                 return TURN_R;
             } else {
                 forkHistory.push(LEFT);
-                followTape();
-                return SEARCH;
+                //turnRobot(TURN_L);
+                return TURN_L;
             }
         }
     }

@@ -6,6 +6,7 @@
 
 
 int turnMode (int direction) {
+    int nightTimeModeTurn = 0;
     turnRobot(direction);
 
     int forkSensor = 0;
@@ -13,10 +14,10 @@ int turnMode (int direction) {
 
 
     if (direction == TURN_L){
-      forkSensor = getReflectance(FORK_SENSOR_R,threshold);
+      forkSensor = getReflectance(FORK_SENSOR_R,threshold + nightTimeModeTurn);
     }
     else {
-      forkSensor = getReflectance(FORK_SENSOR_L,threshold);
+      forkSensor = getReflectance(FORK_SENSOR_L,threshold) + nightTimeModeTurn;
     }
     if(forkSensor == 1 && forkPathCrossed == false){
         //Serial.println("WE CROSSED");

@@ -9,9 +9,12 @@
 // float k_p = 0.28 * SPEED;
 // float k_d = 0.54 * SPEED;
 
+//Worked with old drive train
 float k_p = 0.27 * SPEED;
 float k_d = 0.58 * SPEED;
 
+// float k_p = 0.25*SPEED;
+// float k_d = 0.60 * SPEED;
 // float k_p = 0.33* SPEED;
 // float k_d = 0.52 * SPEED;
 

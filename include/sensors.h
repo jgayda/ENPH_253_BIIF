@@ -38,13 +38,14 @@ extern int TEAM;
 #define TURN_R_180 11
 
 //TAPE FOLLOWER
-#define DETECT_THRESHOLD PA_3
+#define DETECT_THRESHOLD PB0 //PB_0
+
 #define TAPE_FOLLOWER_L PA_5
 #define TAPE_FOLLOWER_R PA_6
-#define LEFT_WHEEL_FWD PB_7
-#define LEFT_WHEEL_BKWD PB_6
-#define RIGHT_WHEEL_FWD PB_8
-#define RIGHT_WHEEL_BKWD PB_9
+#define LEFT_WHEEL_FWD PA_2
+#define LEFT_WHEEL_BKWD PA_3
+#define RIGHT_WHEEL_FWD PB_9
+#define RIGHT_WHEEL_BKWD PB_8
 
 //POST DETECTORS
 #define FORK_SENSOR_L PA_4
@@ -70,6 +71,10 @@ extern const int TRIG_L;
 #define FORK_ON_LEFT 1
 #define FORK_ON_RIGHT 2
 
+extern const int LEFT_FORK_LED;
+extern const int RIGHT_FORK_LED;
+extern int ledTimer;
+
 extern int numForksTaken; //number of seen forks in total
 
 #define SPEED 4000
@@ -82,6 +87,12 @@ extern int storageDirection;
 extern int initialTurn;
 extern bool forkPathCrossed;
 extern int forksInPath; //number of forks in one strategy
+
+//Speed
+extern float speedFactor;
+
+//POST LINE UP
+extern int postLineUpTimer;
 
 //SLAVE BLUE PILL
 #define SLAVE_ADDRESS 69;

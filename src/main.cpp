@@ -33,6 +33,8 @@ bool forkPathCrossed = false; // have we crossed the tape completely
 
 bool pingSlave = false;
 
+float speedFactor = 0.33;
+
 void debugSensorReadings(int setMode);
 void exitModeAlerts(int setMode);
 
@@ -42,12 +44,23 @@ int TEAM = METHANOS;
 
 //course navigation
 std :: stack <int> forkHistory;
-int currentPostMap[10] = {0};
+int currentPostMap[6] = {0};
 
 const int TRIG_R = PB14;
 const int ECHO_R = PB15;
 const int TRIG_L = PB13;
 const int ECHO_L = PB12;
+int postLineUpTimer = 0;
+
+//LED timer
+const int LEFT_FORK_LED = PB10;
+const int RIGHT_FORK_LED = PB1;
+int ledTimer = 0;
+
+int testArray [2] = {0};
+int arrayCopy = 0; //delete later
+
+int speedTimer = 0; // to decrease the speed after a certain amount of time
 
 void setup() {
 
@@ -56,12 +69,16 @@ void setup() {
 
   //Delay added for debugging (allows time to catch beginning of Serial Monitor)
   //Delete for competition
-  delay(2000);
+  delay(5000);
 
  // TAPE FOLLOWER
   pinMode(DETECT_THRESHOLD, INPUT);
   pinMode(TAPE_FOLLOWER_L,INPUT);
   pinMode(TAPE_FOLLOWER_R,INPUT);
+
+  pinMode(LEFT_FORK_LED,OUTPUT);
+  pinMode(RIGHT_FORK_LED,OUTPUT);
+
 
   //POST DETECTORS
   pinMode(FORK_SENSOR_L, INPUT);
@@ -72,6 +89,7 @@ void setup() {
   pinMode(LEFT_WHEEL_BKWD, OUTPUT);
   pinMode(RIGHT_WHEEL_FWD, OUTPUT);
   pinMode(RIGHT_WHEEL_BKWD, OUTPUT);
+
 
   //SET THRESHOLD
   float threshold = analogRead(DETECT_THRESHOLD);
@@ -116,12 +134,26 @@ void setup() {
   pwm_start(RIGHT_WHEEL_BKWD, 100000, SPEED, 0, 1);
   startDriving();
   Serial.println("Setup Completed");
+  speedTimer = millis();
 }
 
 
 
 //MAIN STATE SWITCH BOX
 void loop() {
+
+  if(millis() - ledTimer > 1000){
+    //Serial.println("flashing the led");
+    digitalWrite(LEFT_FORK_LED,LOW);
+    digitalWrite(RIGHT_FORK_LED,LOW);
+    ledTimer = 0;
+  }
+
+  if(millis() - speedTimer > 9500 ) {
+    speedFactor = 0.2;
+  }
+
+
   //To see the values for all of the sensors, uncomment the next line
   #ifdef TESTING
   debugSensorReadings(setMode);
@@ -134,7 +166,37 @@ void loop() {
       //setMode = approachMode();
       break;
     case RETRIEVE:
+      while (millis() - postLineUpTimer < 150) {
+        followTape();
+      }
       stopRobot();
+      // Serial.print("Current Path Map: ");
+      // for(int i = 0; i < forksInPath; i++) {
+      //   if(currentPostMap[i] == LEFT) {
+      //     Serial.print("LEFT ");
+      //   } else if(currentPostMap[i] == RIGHT) {
+      //     Serial.print("RIGHT ");
+      //   } else {
+      //     Serial.print("OVERCOUNTED ");
+      //   }
+      // }
+      // Serial.print(" |  Number of Forks detected: ");
+      // Serial.print(numForksTaken);
+      // Serial.print(" | Fork History: ");
+      // while(forkHistory.size() != 0) {
+      //   testArray[arrayCopy] = forkHistory.top(); //NOTE THIS IS BACKWARDS!!!
+      //   forkHistory.pop();
+      // }
+      // for(int i = 0; i < sizeof testArray / sizeof testArray[0]; i++) {
+      //   if(testArray[i] == LEFT) {
+      //     Serial.print("LEFT ");
+      //   } else if(testArray[i] == RIGHT) {
+      //     Serial.print("RIGHT ");
+      //   } else {
+      //     Serial.print("OVERCOUNTED ");
+      //   }
+      // }
+      // Serial.println("");
       //setMode = retrieveMode();
       break;
     case PATHFINDER:
