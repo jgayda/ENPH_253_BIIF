@@ -14,7 +14,7 @@ const int speed = SPEED;
 int motorVal_L=0;
 int motorVal_R=0;
 
-int nightTimeMode = 300;
+
 
 /* startDriving()
  *
@@ -90,9 +90,9 @@ int followTape() {
   }
 
   #ifdef TESTING
-    //if(millis() % 1000 == 0){
-      printMotorVal(error); //DEBUG
-    //}
+    if(millis() % 500 == 0){
+      //printMotorVal(error); //DEBUG
+    }
   #endif
 
 
@@ -161,14 +161,16 @@ void printMotorVal (int error) {
  */
 int detectFork () {
 
-  int FSL_reflectance = getReflectance(FORK_SENSOR_L,threshold + nightTimeMode + 705); //CHANGE
-  int FSR_reflectance = getReflectance(FORK_SENSOR_R,threshold  + nightTimeMode);
+  int FSL_reflectance = getReflectance(FORK_SENSOR_L,threshold + FORK_THRESHOLD_OFFSET);
+  int FSR_reflectance = getReflectance(FORK_SENSOR_R,threshold  + FORK_THRESHOLD_OFFSET);
 
   #ifdef TESTING
-  Serial.print("Left Fork Sensor: ");
-  Serial.print(analogRead(FSL_reflectance));
-  Serial.print (" Right Fork Sensor: ");
-  Serial.println(analogRead(FSR_reflectance));
+  // if(millis() % 500 == 0) {
+  //   Serial.print("Left Fork Sensor: ");
+  //   Serial.print(analogRead(FSL_reflectance));
+  //   Serial.print (" Right Fork Sensor: ");
+  //   Serial.println(analogRead(FSR_reflectance));
+  // }
   #endif
 
   if (FSL_reflectance == 1) {

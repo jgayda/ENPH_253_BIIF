@@ -4,8 +4,8 @@
 #include <Arduino.h>
 #include <stack>
 
-//#define TESTING 1
-//#define TESTING_FORK 2
+ //#define TESTING 1
+ //#define TESTING_FORK 2
 //#define FORK_HISTORY_TEST 3
 
 /*Thanos starts from the right side of the course
@@ -26,19 +26,23 @@ extern int TEAM;
 //MODES
 #define SEARCH 0
 #define APPROACH 1
-#define RETRIEVE 2
-#define PATHFINDER 3
-#define RETURN 4
-#define DEPOSIT 5
-#define RETREAT 6
-#define DEFENSE 7
-#define TURN_L 8
-#define TURN_R 9
-#define TURN_L_180 10
-#define TURN_R_180 11
+#define RETRIEVE_L 2
+#define RETRIEVE_R 3
+#define PATHFINDER 4
+#define RETURN 5
+#define DEPOSIT 6
+#define RETREAT 7
+#define DEFENSE 8
+#define TURN_L 9
+#define TURN_R 10
+#define TURN_L_180 11
+#define TURN_R_180 12
+
+extern int stateBeforeTurn;
 
 //TAPE FOLLOWER
 #define DETECT_THRESHOLD PB0 //PB_0
+#define LIGHT_SENSOR PA1
 
 #define TAPE_FOLLOWER_L PA_5
 #define TAPE_FOLLOWER_R PA_6
@@ -46,6 +50,8 @@ extern int TEAM;
 #define LEFT_WHEEL_BKWD PA_3
 #define RIGHT_WHEEL_FWD PB_9
 #define RIGHT_WHEEL_BKWD PB_8
+
+#define FORK_THRESHOLD_OFFSET 80 // CHANGE
 
 //POST DETECTORS
 #define FORK_SENSOR_L PA_4
@@ -87,6 +93,10 @@ extern int storageDirection;
 extern int initialTurn;
 extern bool forkPathCrossed;
 extern int forksInPath; //number of forks in one strategy
+extern int forkTimer;
+#define forkTimerLimit 2000
+#define turnTimerLimit 200
+#define followTapeTimerLimit 200
 
 //Speed
 extern float speedFactor;
@@ -94,11 +104,17 @@ extern float speedFactor;
 //POST LINE UP
 extern int postLineUpTimer;
 
+//TURN alignment
+extern int turnTimer;
+extern int followTapeTimer;
+extern int forkDetectionCondition;
 //SLAVE BLUE PILL
 #define SLAVE_ADDRESS 69;
 extern bool pingSlave;
 
 //POINT COUNTER
 extern int stonesScored;
+
+
 
 #endif

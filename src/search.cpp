@@ -26,6 +26,7 @@ int detectDistance_cm(int trigPin, int echoPin);
  * @returns : setMode - the mode that the robot switches to post searchMode
  */
 int searchMode() {
+    stateBeforeTurn = SEARCH;
     if(forkHistory.size() > 0) {
         speedFactor = 0.18;
     }
@@ -40,6 +41,25 @@ int searchMode() {
         error = followTape();
     }
 
+
+    if(millis() - forkTimer < forkTimerLimit) {
+        #ifdef TESTING_FORK
+            Serial.print("I'm not supposed to detect a fork, forkTimer: ");
+            Serial.print(forkTimer);
+            Serial.print(" | currentTimer: ");
+            Serial.print(millis());
+            Serial.print(" | forkTimerLimit: ");
+            Serial.println(forkTimer);
+        #endif
+        error = followTape(); // don't check for fork
+        return SEARCH; // don't detect forks;
+    }
+
+    if(millis() - followTapeTimer < followTapeTimerLimit){
+        error = followTape();
+        return SEARCH;
+    }
+
     // PinName trigPin;
     // PinName echoPin;
 
@@ -47,12 +67,14 @@ int searchMode() {
     int echoPin;
 
     #ifdef TESTING_FORK
-        printSonarValues(TRIG_L,ECHO_L);
-        Serial.println(" ");
-        printSonarValues(TRIG_R,ECHO_R);
+        //printSonarValues(TRIG_L,ECHO_L);
+       // Serial.println(" ");
+        //printSonarValues(TRIG_R,ECHO_R);
     #endif
 
-    if (abs(error) < 5) {
+
+
+    if (abs(error) <= forkDetectionCondition) {
 
         fork = detectFork();
 
@@ -62,8 +84,9 @@ int searchMode() {
         #endif
 
         if(fork == FORK_ON_LEFT) {
+            forkTimer = millis();
             stopRobot();
-            digitalWrite(RIGHT_FORK_LED,HIGH);
+            digitalWrite(LEFT_FORK_LED,HIGH);
             ledTimer = millis();
             direction = LEFT;
             #ifdef TESTING_FORK
@@ -110,20 +133,22 @@ int searchMode() {
             if(forkHistory.size() == forksInPath - 1){
                 stopRobot();
                 postLineUpTimer = millis();
-                return RETRIEVE;
+                return RETRIEVE_L;
             }
             numForksTaken ++;
 
             if(direction == nextTurn) {
                 forkHistory.push(LEFT);
+                turnTimer = millis();
                 return TURN_L;
             } else {
                 forkHistory.push(RIGHT);
                 //turnRobot(TURN_R);
-                return TURN_R;
+                return SEARCH;
             }
 
         } else if(fork == FORK_ON_RIGHT) {
+            forkTimer = millis();
             stopRobot();
             digitalWrite(RIGHT_FORK_LED,HIGH);
             ledTimer = millis();
@@ -173,16 +198,18 @@ int searchMode() {
             if(forkHistory.size() == forksInPath - 1 ){
                 stopRobot();
                 postLineUpTimer = millis();
-                return RETRIEVE;
+                return RETRIEVE_R;
             }
             numForksTaken ++;
             if(direction == nextTurn) {
                 forkHistory.push(RIGHT);
+                turnTimer = millis();
                 return TURN_R;
             } else {
                 forkHistory.push(LEFT);
+                followTapeTimer = millis();
                 //turnRobot(TURN_L);
-                return TURN_L;
+                return SEARCH;
             }
         }
     }

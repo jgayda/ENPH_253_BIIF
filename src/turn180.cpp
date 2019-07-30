@@ -41,7 +41,7 @@ int turn180Robot(int direction180) {
 
         //Serial.println("from turn mode back to search mode");
         forkCrossed = false;
-        return SEARCH;
+        return RETURN;
     }
 
     return direction180;

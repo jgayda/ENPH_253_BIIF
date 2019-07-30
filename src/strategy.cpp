@@ -2,7 +2,7 @@
 #include <sensors.h>
 
 //const int methanos_turnOrder_post1 [3] = {RIGHT,LEFT,LEFT};
-const int methanos_turnOrder_TEST [3] = {RIGHT,LEFT,LEFT};
+const int methanos_turnOrder_TEST [3] = {RIGHT,RIGHT,RIGHT};
 const int thanos_turnOrder_TEST [5] = {LEFT,LEFT,RIGHT,RIGHT,LEFT};
 
 //const int M_post_1 [2] = {RIGHT RIGHT};

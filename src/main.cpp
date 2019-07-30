@@ -33,7 +33,7 @@ bool forkPathCrossed = false; // have we crossed the tape completely
 
 bool pingSlave = false;
 
-float speedFactor = 0.33;
+float speedFactor = 0.18;
 
 void debugSensorReadings(int setMode);
 void exitModeAlerts(int setMode);
@@ -48,19 +48,26 @@ int currentPostMap[6] = {0};
 
 const int TRIG_R = PB14;
 const int ECHO_R = PB15;
-const int TRIG_L = PB13;
-const int ECHO_L = PB12;
+const int TRIG_L = PB12;
+const int ECHO_L = PB13;
 int postLineUpTimer = 0;
 
 //LED timer
-const int LEFT_FORK_LED = PB10;
-const int RIGHT_FORK_LED = PB1;
+const int LEFT_FORK_LED = PB1;
+const int RIGHT_FORK_LED = PB10;
 int ledTimer = 0;
 
 int testArray [2] = {0};
 int arrayCopy = 0; //delete later
 
 int speedTimer = 0; // to decrease the speed after a certain amount of time
+
+int stateBeforeTurn = 0;
+
+int forkTimer = 0; //to reduce chances of double counting the forks
+int turnTimer = 0; //keeps turning before checking for the line
+int followTapeTimer = 0;
+int forkDetectionCondition = 1;
 
 void setup() {
 
@@ -73,6 +80,7 @@ void setup() {
 
  // TAPE FOLLOWER
   pinMode(DETECT_THRESHOLD, INPUT);
+  pinMode(LIGHT_SENSOR,INPUT);
   pinMode(TAPE_FOLLOWER_L,INPUT);
   pinMode(TAPE_FOLLOWER_R,INPUT);
 
@@ -149,10 +157,10 @@ void loop() {
     ledTimer = 0;
   }
 
-  if(millis() - speedTimer > 9500 ) {
-    speedFactor = 0.2;
+  if(millis() - speedTimer > 9600 ) {
+    speedFactor = 0.15;
+    forkDetectionCondition = 5; //can detect forks better on the surface
   }
-
 
   //To see the values for all of the sensors, uncomment the next line
   #ifdef TESTING
@@ -165,11 +173,14 @@ void loop() {
     case APPROACH:
       //setMode = approachMode();
       break;
-    case RETRIEVE:
-      while (millis() - postLineUpTimer < 150) {
+    case RETRIEVE_L:
+      while (millis() - postLineUpTimer < 270) {
         followTape();
       }
       stopRobot();
+      if(millis() - postLineUpTimer > 5000){
+        setMode = TURN_R_180;
+      }
       // Serial.print("Current Path Map: ");
       // for(int i = 0; i < forksInPath; i++) {
       //   if(currentPostMap[i] == LEFT) {
@@ -199,15 +210,25 @@ void loop() {
       // Serial.println("");
       //setMode = retrieveMode();
       break;
+    case RETRIEVE_R:
+      while (millis() - postLineUpTimer < 270) {
+        followTape();
+      }
+      stopRobot();
+      if(millis() - postLineUpTimer > 2000){
+        setMode = TURN_L_180;
+      }
+      break;
     case PATHFINDER:
       //setMode = pathfinderMode();
       break;
     case RETURN:
-      stopRobot();
-      setMode = returnMode();
+      //setMode = returnMode();
+      stopRobot(); //change
       break;
     case DEPOSIT:
       //setMode = depositMode();
+      stopRobot();
       break;
     case DEFENSE:
       //setMode = defenseMode();
@@ -245,18 +266,22 @@ void loop() {
  * @param : setMode - the current mode/state of the robot
  */
 void debugSensorReadings(int setMode) {
-  Serial.print("FSL Value: ");
-  Serial.print(analogRead(FORK_SENSOR_L));
-  Serial.print(" | TFL Value: ");
-  Serial.print(analogRead(TAPE_FOLLOWER_L));
-  Serial.print(" | TFR Value: ");
-  Serial.print(analogRead(TAPE_FOLLOWER_R));
-  Serial.print(" | FSR Value: ");
-  Serial.print(analogRead(FORK_SENSOR_R));
-  Serial.print(" | THRESH Value: ");
-  Serial.print(analogRead(DETECT_THRESHOLD));
-  Serial.print(" | MODE: ");
-  Serial.println(setMode);
+  if(millis() % 500 == 0) {
+    Serial.print(" | FSL Value: ");
+    Serial.print(analogRead(FORK_SENSOR_L));
+    Serial.print(" | TFL Value: ");
+    Serial.print(analogRead(TAPE_FOLLOWER_L));
+    Serial.print(" | TFR Value: ");
+    Serial.print(analogRead(TAPE_FOLLOWER_R));
+    Serial.print(" | FSR Value: ");
+    Serial.print(analogRead(FORK_SENSOR_R));
+    Serial.print(" | THRESH Value: ");
+    Serial.print(analogRead(DETECT_THRESHOLD));
+    Serial.print(" | FORK THRESHOLD: ");
+    Serial.print(analogRead(DETECT_THRESHOLD)+ FORK_THRESHOLD_OFFSET);
+    Serial.print(" | MODE: ");
+    Serial.println(setMode);
+  }
 }
 
 
