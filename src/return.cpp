@@ -136,7 +136,7 @@ int returnMode() {
             if(forkNumber == 1){
                 forkHistory.pop();
                 //you're at home fork
-                if(TEAM ==METHANOS) {
+                if(TEAM == METHANOS) {
                     return TURN_R; //CHANGE
                 } else {
                     return TURN_L;

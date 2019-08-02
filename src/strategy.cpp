@@ -5,7 +5,7 @@
 const int methanos_turnOrder_TEST [3] = {RIGHT,RIGHT,RIGHT};
 const int thanos_turnOrder_TEST [5] = {LEFT,LEFT,RIGHT,RIGHT,LEFT};
 
-//const int M_post_1 [2] = {RIGHT RIGHT};
+//const int M_post_1 [2] = {RIGHT LEFT, LEFT};
 // const int M_post_2 [2];
 // const int M_post_3 [3];
 // const int M_post_4 [3];

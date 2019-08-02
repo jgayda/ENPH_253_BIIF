@@ -247,7 +247,6 @@ int detectDistance_cm(int trigPin,int echoPin) {
 }
 
 void printSonarValues(int trigPin, int echoPin){
-
         int distance =  detectDistance_cm(trigPin,echoPin);
         Serial.println("Sonar distance:");
         Serial.println(distance);

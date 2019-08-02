@@ -15,10 +15,17 @@
 //Describes the maximum amount of times the robot will try to pick up the claw before giving up.
 
 #include <Arduino.h>
+#include <sensors.h>
+#include <search.h>
 #include <Wire.h>
 #include <time.h>
 #include <math.h>
 
+int retrieveMode(int direction) {
+  int slaveAction = PICKUP;
+  int slaveDirection = (direction == LEFT) ? SLAVE_LEFT:SLAVE_RIGHT;
+  int slaveDistance = (direction == LEFT) ? detect
+}
 
 
 

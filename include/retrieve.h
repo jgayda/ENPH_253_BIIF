@@ -1,1 +1,1 @@
-int retrieveMode();
+int retrieveMode(int direction);
