@@ -7,7 +7,10 @@
  //#define TESTING 1
  //#define TESTING_FORK 2
 //#define FORK_HISTORY_TEST 3
-
+//#define RAMP_TESTING 4
+//#define TESTING_SONAR 5
+//#define TEAM_TESTING 6
+#define COLLISION_TESTING
 /*Thanos starts from the right side of the course
  *  1) The first fork we will detect will be the safe storage marker and will be on the LEFT (ignore this)
  *  2) The next fork we will detect will be the fork between the safe storage and the rest of the course,
@@ -39,6 +42,13 @@ extern int TEAM;
 #define TURN_R_180 12
 
 extern int stateBeforeTurn;
+extern int stateBefore180Turn;
+
+//TEAM SWITCH
+#define WHAT_TEAM PA_0
+
+//COLLISIOn
+#define COLLISION_SWITCH PC15
 
 //TAPE FOLLOWER
 #define DETECT_THRESHOLD PB0 //PB_0
@@ -109,11 +119,17 @@ extern int turnTimer;
 extern int followTapeTimer;
 extern int forkDetectionCondition;
 //SLAVE BLUE PILL
-#define SLAVE_ADDRESS 69;
+#define SLAVE_ADDRESS 69
 extern bool pingSlave;
 
 //POINT COUNTER
 extern int stonesScored;
+
+//rampSensor
+extern const int rampSensor;
+extern int rampSensorHistory;
+#define RAMP_THRESHOLD 25
+
 
 
 

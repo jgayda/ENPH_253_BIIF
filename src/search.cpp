@@ -28,7 +28,7 @@ int detectDistance_cm(int trigPin, int echoPin);
 int searchMode() {
     stateBeforeTurn = SEARCH;
     if(forkHistory.size() > 0) {
-        speedFactor = 0.18;
+        speedFactor = 0.24;
     }
     int direction =0;
     int distance = DISTANCE_THRESH + 10 ;
@@ -43,7 +43,7 @@ int searchMode() {
 
 
     if(millis() - forkTimer < forkTimerLimit) {
-        #ifdef TESTING_FORK
+        #ifdef TESTING_SONAR
             Serial.print("I'm not supposed to detect a fork, forkTimer: ");
             Serial.print(forkTimer);
             Serial.print(" | currentTimer: ");
@@ -67,9 +67,9 @@ int searchMode() {
     int echoPin;
 
     #ifdef TESTING_FORK
-        //printSonarValues(TRIG_L,ECHO_L);
-       // Serial.println(" ");
-        //printSonarValues(TRIG_R,ECHO_R);
+        printSonarValues(TRIG_L,ECHO_L);
+       Serial.println(" ");
+        printSonarValues(TRIG_R,ECHO_R);
     #endif
 
 
@@ -130,10 +130,14 @@ int searchMode() {
 
             int nextTurn = currentPostMap[numForksTaken];
             int forkNumber  = forkHistory.size();
-            if(forkHistory.size() == forksInPath - 1){
+            if(forkHistory.size() == forksInPath - 1 && nextTurn == direction){
                 stopRobot();
                 postLineUpTimer = millis();
                 return RETRIEVE_L;
+            }
+            if(forkHistory.size() == forksInPath - 1 && nextTurn != direction ){
+                stateBeforeTurn = SEARCH;
+                return TURN_L_180;
             }
             numForksTaken ++;
 
@@ -195,10 +199,14 @@ int searchMode() {
                 Serial.println(forkHistory.top());
             #endif
             int nextTurn = currentPostMap[numForksTaken];
-            if(forkHistory.size() == forksInPath - 1 ){
+            if(forkHistory.size() == forksInPath - 1 && nextTurn == direction){
                 stopRobot();
                 postLineUpTimer = millis();
                 return RETRIEVE_R;
+            }
+            if(forkHistory.size() == forksInPath - 1 && nextTurn != direction ){
+                stateBeforeTurn = SEARCH;
+                return TURN_R_180;
             }
             numForksTaken ++;
             if(direction == nextTurn) {

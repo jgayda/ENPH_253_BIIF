@@ -53,8 +53,8 @@ void turnRobot(int direction) {
     driveMotor(0,RIGHT_WHEEL_BKWD,RIGHT_WHEEL_FWD);
   }
   else {
-    driveMotor(SPEED, LEFT_WHEEL_FWD, LEFT_WHEEL_BKWD ); //stop the wheel
-    //driveMotor(0,RIGHT_WHEEL_FWD,RIGHT_WHEEL_BKWD);
+    driveMotor(0,RIGHT_WHEEL_FWD,RIGHT_WHEEL_BKWD);
+    //driveMotor(SPEED, LEFT_WHEEL_FWD, LEFT_WHEEL_BKWD ); //stop the wheel
     driveMotor(0,LEFT_WHEEL_BKWD,LEFT_WHEEL_FWD);
   }
 }

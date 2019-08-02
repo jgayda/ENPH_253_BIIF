@@ -33,7 +33,7 @@ bool forkPathCrossed = false; // have we crossed the tape completely
 
 bool pingSlave = false;
 
-float speedFactor = 0.18;
+float speedFactor = 0.38;
 
 void debugSensorReadings(int setMode);
 void exitModeAlerts(int setMode);
@@ -53,16 +53,20 @@ const int ECHO_L = PB13;
 int postLineUpTimer = 0;
 
 //LED timer
-const int LEFT_FORK_LED = PB1;
+const int LEFT_FORK_LED = PB11;
 const int RIGHT_FORK_LED = PB10;
 int ledTimer = 0;
 
+// ramp sensor
+const int rampSensor = PB1;
+int rampSensorHistory = 2000;
 int testArray [2] = {0};
 int arrayCopy = 0; //delete later
 
 int speedTimer = 0; // to decrease the speed after a certain amount of time
 
 int stateBeforeTurn = 0;
+int stateBefore180Turn = 0;
 
 int forkTimer = 0; //to reduce chances of double counting the forks
 int turnTimer = 0; //keeps turning before checking for the line
@@ -77,6 +81,9 @@ void setup() {
   //Delay added for debugging (allows time to catch beginning of Serial Monitor)
   //Delete for competition
   delay(5000);
+
+  // TEAM
+  pinMode(WHAT_TEAM,INPUT);
 
  // TAPE FOLLOWER
   pinMode(DETECT_THRESHOLD, INPUT);
@@ -98,6 +105,11 @@ void setup() {
   pinMode(RIGHT_WHEEL_FWD, OUTPUT);
   pinMode(RIGHT_WHEEL_BKWD, OUTPUT);
 
+ //RAMP SENSOR
+  pinMode(rampSensor,INPUT_PULLUP);
+
+  //COLLIOSN SENSOR
+  pinMode(COLLISION_SWITCH,INPUT_PULLUP);
 
   //SET THRESHOLD
   float threshold = analogRead(DETECT_THRESHOLD);
@@ -119,21 +131,21 @@ void setup() {
   //Check to see if robot is initially on tape
   int initialCondition = 0;
   int counter = 0;
-  while(analogRead(TAPE_FOLLOWER_L) < threshold || analogRead(TAPE_FOLLOWER_R) < threshold) {
-    if(initialCondition == 0) {
-      initialCondition++;
-      Serial.println("Robot Initially off tape, please fix :)");
-    }
-    counter++;
-    if(counter % 10000 == 0) {
-      Serial.print("Threshold: ");
-      Serial.print(analogRead(DETECT_THRESHOLD));
-      Serial.print("Left Sensor Value: ");
-      Serial.print(analogRead(TAPE_FOLLOWER_L));
-      Serial.print(" | Right Sensor Value: ");
-      Serial.println(analogRead(TAPE_FOLLOWER_R));
-    }
-  }
+  // while(analogRead(TAPE_FOLLOWER_L) < threshold || analogRead(TAPE_FOLLOWER_R) < threshold) {
+  //   if(initialCondition == 0) {
+  //     initialCondition++;
+  //     Serial.println("Robot Initially off tape, please fix :)");
+  //   }
+  //   counter++;
+  //   if(counter % 10000 == 0) {
+  //     Serial.print("Threshold: ");
+  //     Serial.print(analogRead(DETECT_THRESHOLD));
+  //     Serial.print("Left Sensor Value: ");
+  //     Serial.print(analogRead(TAPE_FOLLOWER_L));
+  //     Serial.print(" | Right Sensor Value: ");
+  //     Serial.println(analogRead(TAPE_FOLLOWER_R));
+  //   }
+  // }
 
   //Start driving the robot forward once the initial conditions have been meet
   pwm_start(LEFT_WHEEL_FWD, 100000, SPEED, 0, 1);
@@ -149,6 +161,25 @@ void setup() {
 
 //MAIN STATE SWITCH BOX
 void loop() {
+  #ifdef TEAM_TESTING
+    Serial.println(analogRead(WHAT_TEAM));
+
+    if(analogRead(WHAT_TEAM)  > 1000){
+      Serial.println("THANOS");
+    } else {
+      Serial.println("METHANOS");
+    }
+  #endif
+
+  #ifdef COLLISION_TESTING
+   if(digitalRead(COLLISION_SWITCH) == 1){
+     Serial.println("COLLISION");
+   } else {
+     Serial.println("NO COLLISION");
+   }
+   #endif
+
+
 
   if(millis() - ledTimer > 1000){
     //Serial.println("flashing the led");
@@ -157,12 +188,28 @@ void loop() {
     ledTimer = 0;
   }
 
-  if(millis() - speedTimer > 9600 ) {
-    speedFactor = 0.15;
-    forkDetectionCondition = 5; //can detect forks better on the surface
+  // if(millis() - speedTimer > 9600 ) {
+  //   speedFactor = 0.24;
+  //   forkDetectionCondition = 5; //can detect forks better on the surface
+  // } //CHANGE
+
+  int rampValue = digitalRead(rampSensor);
+  if(rampValue == 1) {
+    #ifdef RAMP_TESTING
+      Serial.println("slowing down the robot");
+      Serial.print(rampValue);
+      Serial.print(" | history:");
+      Serial.println(rampSensorHistory);
+    #endif
+    speedFactor = 0.18;
+    forkDetectionCondition = 5; // can detect forks better on the surface
   }
+  rampSensorHistory = analogRead(rampSensor);
 
   //To see the values for all of the sensors, uncomment the next line
+  #ifdef RAMP_TESTING
+    Serial.println(analogRead(rampSensor));
+  #endif
   #ifdef TESTING
   debugSensorReadings(setMode);
   #endif
@@ -178,6 +225,7 @@ void loop() {
         followTape();
       }
       stopRobot();
+      stateBefore180Turn = RETRIEVE_L;
       if(millis() - postLineUpTimer > 5000){
         setMode = TURN_R_180;
       }
@@ -215,6 +263,7 @@ void loop() {
         followTape();
       }
       stopRobot();
+      stateBefore180Turn = RETRIEVE_R;
       if(millis() - postLineUpTimer > 2000){
         setMode = TURN_L_180;
       }
