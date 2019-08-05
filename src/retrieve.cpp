@@ -22,9 +22,9 @@
 #include <math.h>
 
 int retrieveMode(int direction) {
-  int slaveAction = PICKUP;
-  int slaveDirection = (direction == LEFT) ? SLAVE_LEFT:SLAVE_RIGHT;
-  int slaveDistance = (direction == LEFT) ? detect
+//   int slaveAction = PICKUP;
+//   int slaveDirection = (direction == LEFT) ? SLAVE_LEFT:SLAVE_RIGHT;
+//   int slaveDistance = (direction == LEFT) ? detect
 }
 
 

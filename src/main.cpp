@@ -54,7 +54,7 @@ bool pingSlave = false;
 
 
 // * * * DRIVE SYSTEM * * * //
-float speedFactor = 0.38;
+float speedFactor = 0.50;
 // * * * DRIVE SYSTEM * * * //
 
 
@@ -89,7 +89,7 @@ int ledTimer = 0;
 
 
 // * * * RAMP INCLINE SENSOR * * * //
-const int rampSensor = PB1;
+const int rampSensor = PB3;
 int rampSensorHistory = 2000;
 // * * * RAMP INCLINE SENSOR * * * //
 
@@ -192,11 +192,11 @@ void loop() {
   #endif
 
   #ifdef COLLISION_TESTING
-   if(digitalRead(COLLISION_SWITCH) == 1){
-     Serial.println("COLLISION");
-   } else {
-     Serial.println("NO COLLISION");
-   }
+  //  if(digitalRead(COLLISION_SWITCH) == 1){
+  //    Serial.println("COLLISION");
+  //  } else {
+  //    Serial.println("NO COLLISION");
+  //  }
    #endif
 
   if(millis() - ledTimer > 1000){
@@ -227,7 +227,7 @@ void loop() {
 
   //To see the values for all of the sensors, uncomment the next line
   #ifdef RAMP_TESTING
-    Serial.println(analogRead(rampSensor));
+    //Serial.println(analogRead(rampSensor));
   #endif
   #ifdef TESTING
   debugSensorReadings(setMode);

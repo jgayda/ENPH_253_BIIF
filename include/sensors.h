@@ -57,8 +57,8 @@ extern int stateBefore180Turn;
 
 #define TAPE_FOLLOWER_L PA_5
 #define TAPE_FOLLOWER_R PA_6
-#define LEFT_WHEEL_FWD PA_2
-#define LEFT_WHEEL_BKWD PA_3
+#define LEFT_WHEEL_FWD PA_3
+#define LEFT_WHEEL_BKWD PA_2
 #define RIGHT_WHEEL_FWD PB_9
 #define RIGHT_WHEEL_BKWD PB_8
 
