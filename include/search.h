@@ -2,6 +2,7 @@
 #define SEARCH_H
 
 int searchMode();
+int detectDistance_cm(int trigPin,int echoPin);
 
 extern bool firstFork;
 

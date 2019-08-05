@@ -1,1 +1,1 @@
-int returnMode();
+int returnMode(int returnState);

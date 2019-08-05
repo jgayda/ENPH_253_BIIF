@@ -15,18 +15,55 @@
 //Describes the maximum amount of times the robot will try to pick up the claw before giving up.
 
 #include <Arduino.h>
+#include <Wire.h>
+#include <stdint.h>
+
 #include <sensors.h>
 #include <search.h>
-#include <Wire.h>
 #include <time.h>
 #include <math.h>
 
+int slaveCommTimeout = 20000;
+
+byte masterRequest();
+void masterTransmit(byte buffer [3]);
+
+//TODO: DISABLE INTERRUPTS
+
 int retrieveMode(int direction) {
-  int slaveAction = PICKUP;
-  int slaveDirection = (direction == LEFT) ? SLAVE_LEFT:SLAVE_RIGHT;
-  int slaveDistance = (direction == LEFT) ? detect
+  byte slaveAction = PICKUP;
+  byte slaveDirection = (direction == LEFT) ? SLAVE_LEFT:SLAVE_RIGHT;
+  byte slaveDistance = (direction == LEFT) ? detectDistance_cm(TRIG_L,ECHO_L):detectDistance_cm(TRIG_R,ECHO_R);
+
+  byte buffer [] = {slaveAction,slaveDirection,slaveDistance};
+
+  volatile byte a = 1;
+
+  int transmisstionTimer = millis(); 
+
+  masterTransmit(buffer);
+  byte masterResponse = masterRequest();
+  while(masterResponse == IN_PROGRESS) {
+    masterResponse = masterRequest();
+    if(millis() - transmisstionTimer > slaveCommTimeout) return RESET; 
+  }
+  return (masterResponse == COMPLETE) ? RETURN : RESET; 
 }
 
 
 
+byte masterRequest() { 
+  byte reply = Wire.requestFrom(SLAVE_ADDRESS,1);
+  while (Wire.available()) {
+    byte a = Wire.read(); 
+  }
+  return reply;
+}
 
+
+
+void masterTransmit(byte buffer[3]) {
+  Wire.beginTransmission(SLAVE_ADDRESS);
+  Wire.write(buffer,3);
+  Wire.endTransmission();
+}

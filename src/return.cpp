@@ -5,9 +5,9 @@
 #include <PWM.h>
 #include <strategy.h>
 
-int returnMode() {
+int returnMode(int returnState) {
     int direction = 0;
-    stateBeforeTurn = RETURN;
+    stateBeforeTurn = returnState;
     int fork = NO_FORK;
     int error = 10;
     int forkLocation =0;
@@ -19,7 +19,7 @@ int returnMode() {
 
     if(millis() - forkTimer < forkTimerLimit) {
         error = followTape(); // don't check for fork
-        return RETURN;
+        return returnState;
     }
 
 
@@ -67,20 +67,29 @@ int returnMode() {
             if(forkNumber == 1){
                 forkHistory.pop();
                 //you're at home fork
-                if(TEAM ==METHANOS) {
+                // if(TEAM ==METHANOS) {
+                //     turnTimer = millis();
+                //     return TURN_R; //CHANGE
+                // } else {
+                //     turnTimer = millis();
+                //     return TURN_L;
+                // }
+                if(returnState == RETURN) {
                     turnTimer = millis();
-                    return TURN_R; //CHANGE
+                    stateBeforeTurn = DEPOSIT;
+                    return (TEAM == METHANOS) ? TURN_R : TURN_L;
                 } else {
-                    turnTimer = millis();
-                    return TURN_L;
+                    stateBefore180Turn = SEARCH;
+                    return (TEAM == METHANOS) ? TURN_R_180 : TURN_L_180;
                 }
             }
             if(forkNumber == 2) {
                 forkHistory.pop();
                 followTape();
-                return RETURN;
+                return returnState;
             }
-            if(forkNumber == 0) {
+            if(forkNumber == 0) { // THIS SHOULD NEVER HAPPEN
+
                 stopRobot();// CHANGE
                 return DEPOSIT;
 
@@ -100,6 +109,7 @@ int returnMode() {
                 turnTimer = millis();
                 return TURN_L;
             } else {
+                turnTimer = millis();
                 return TURN_R;
             }
 
@@ -135,17 +145,27 @@ int returnMode() {
             int forkNumber  = forkHistory.size();
             if(forkNumber == 1){
                 forkHistory.pop();
-                //you're at home fork
-                if(TEAM == METHANOS) {
-                    return TURN_R; //CHANGE
+                // //you're at home fork
+                // if(TEAM == METHANOS) {
+                //     turnTimer = millis();
+                //     return TURN_R; //CHANGE
+                // } else {
+                //     turnTimer = millis();
+                //     return TURN_L;
+                // }
+                if(returnState == RETURN) {
+                    turnTimer = millis();
+                    stateBeforeTurn = DEPOSIT;
+                    return (TEAM == METHANOS) ? TURN_R : TURN_L;
                 } else {
-                    return TURN_L;
+                    stateBefore180Turn = SEARCH;
+                    return (TEAM == METHANOS) ? TURN_R_180 : TURN_L_180;
                 }
             }
             if(forkNumber == 2) {
-                forkHistory.pop();
+                forkHistory.pop(); //change 
                 followTape();
-                return RETURN;
+                return returnState;
             }
             if(forkNumber == 0) {
                 stopRobot(); //CHANGE
@@ -166,13 +186,14 @@ int returnMode() {
                 turnTimer = millis();
                 return TURN_R;
             } else {
+                turnTimer = millis();
                 return TURN_L;
             }
 
         }
     }
-    return RETURN;
-
+    return returnState;
+    //ok
 }
 
 //Serial.print("mejans macbook air, mejans macbook air, fuck a bitch on mejans macbook air");

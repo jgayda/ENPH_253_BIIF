@@ -41,6 +41,7 @@ extern int TEAM;
 #define TURN_R 10
 #define TURN_L_180 11
 #define TURN_R_180 12
+#define RESET 13
 
 extern int stateBeforeTurn;
 extern int stateBefore180Turn;
@@ -137,5 +138,8 @@ extern int rampSensorHistory;
 #define PUTDOWN 2
 #define SLAVE_LEFT 0
 #define SLAVE_RIGHT 1
+#define IN_PROGRESS 0
+#define COMPLETE 1
+#define UNABLE 2
 
 #endif

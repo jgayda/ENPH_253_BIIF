@@ -113,7 +113,7 @@ void initialTapeConditions(float threshold);
 
 void setup() {
   Serial.begin(9600);
-  //DO NOT inlucde Wire.begin() --> Interferes with the TX&RX functions of the bluepill!
+  Wire.begin(); //Delete IF TX & RX Pins are causing problems for other functions
 
   //Delay added for debugging (allows time to catch beginning of Serial Monitor)
   delay(5000); //Delete for competition
@@ -245,16 +245,25 @@ void loop() {
       break;
 
     case RETRIEVE_L:
+      //Align the robot with the post
       while (millis() - postLineUpTimer < 270) {
         followTape();
       }
-      stopRobot();
-      stateBefore180Turn = RETRIEVE_L;
-      if(millis() - postLineUpTimer > 5000){
-        setMode = TURN_R_180;
-      }
 
-      setMode = retrieveMode(LEFT);
+      //Stop the robot
+      stopRobot();
+
+      //Attempt to pick up stone, wait for exit code
+      stateBefore180Turn = retrieveMode(LEFT);
+
+      setMode = TURN_R_180;
+
+      // stateBefore180Turn = RETRIEVE_L;
+      // if(millis() - postLineUpTimer > 5000){
+      //   setMode = TURN_R_180;
+      // }
+
+      //setMode = retrieveMode(LEFT);
 
       break;
 
@@ -262,14 +271,18 @@ void loop() {
       while (millis() - postLineUpTimer < 270) {
         followTape();
       }
+      
       stopRobot();
-      stateBefore180Turn = RETRIEVE_R;
-      if(millis() - postLineUpTimer > 2000){ //CHANGE THIS
-        setMode = TURN_L_180;
-      }
 
-      setMode = retrieveMode(RIGHT);
+      stateBefore180Turn = retrieveMode(RIGHT);
 
+      setMode = TURN_L_180;
+      // stateBefore180Turn = RETRIEVE_R;
+      // if(millis() - postLineUpTimer > 2000){ //CHANGE THIS
+      //   setMode = TURN_L_180;
+      // }
+
+      // setMode = retrieveMode(RIGHT);
       break;
 
     case PATHFINDER:
@@ -279,6 +292,7 @@ void loop() {
     case RETURN:
       //setMode = returnMode();
       stopRobot(); //change
+      returnMode(RETURN);
       break;
 
     case DEPOSIT:
@@ -310,6 +324,11 @@ void loop() {
 
     case TURN_R_180:
       setMode = turn180Robot(TURN_R_180);
+      break;
+
+    case RESET:
+      forksInPath = switchStrategy(TEAM);
+      setMode = returnMode(RESET);
       break;
 
   }

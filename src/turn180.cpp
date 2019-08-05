@@ -41,12 +41,13 @@
 
         //Serial.println("from turn mode back to search mode");
         forkCrossed = false;
-        if(stateBefore180Turn == RETRIEVE_L || stateBefore180Turn == RETRIEVE_R) {
-            return RETURN; //transition between return and turn
-        }
-        else {
-            return stateBefore180Turn;
-        }
+        // if(stateBefore180Turn == RETRIEVE_L || stateBefore180Turn == RETRIEVE_R) {
+        //     return RETURN; //transition between return and turn
+        // }
+        // else { //Delete if else statement and just have return stateBefore180Turn;
+        //     return stateBefore180Turn;
+        // }
+        return stateBefore180Turn; 
     }
 
      return direction180;
