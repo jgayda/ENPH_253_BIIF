@@ -4,14 +4,18 @@
 #include <Arduino.h>
 #include <stack>
 
-//#define TESTING 1
+#define TESTING 1
 //#define TESTING_FORK 2
 //#define FORK_HISTORY_TEST 3
 //#define RAMP_TESTING 4
 //#define TESTING_SONAR 5
 //#define TEAM_TESTING 6
+#define SLAVE_TESTING 7
+#define SERIAL_TESTING 8
 
-#define COLLISION_TESTING
+#define SLAVE_SERIAL Serial1
+
+//#define COLLISION_TESTING
 /*Thanos starts from the right side of the course
  *  1) The first fork we will detect will be the safe storage marker and will be on the LEFT (ignore this)
  *  2) The next fork we will detect will be the fork between the safe storage and the rest of the course,
@@ -138,7 +142,7 @@ extern int rampSensorHistory;
 #define PUTDOWN 2
 #define SLAVE_LEFT 0
 #define SLAVE_RIGHT 1
-#define IN_PROGRESS 0
+#define IN_PROGRESS 3
 #define COMPLETE 1
 #define UNABLE 2
 

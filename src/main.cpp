@@ -8,11 +8,11 @@
 
 #include <search.h>
 #include <approach.h>
-#include <retrieve.h>
+ #include <retrieve.h>
 #include <return.h>
 #include <turn.h>
 #include <turn180.h>
-#include <sensors.h>
+ #include <sensors.h>
 #include <followTape.h>
 #include <strategy.h>
 
@@ -28,7 +28,8 @@ volatile int previousDiffError = 0; //The previous DIFFERENT error value that we
 
 
 // * * * STATE MACHINE * * * //
-volatile int setMode = SEARCH; //Robot will initially be in search mode (following tape and looking for posts)
+//volatile int setMode = SEARCH; //Robot will initially be in search mode (following tape and looking for posts)
+volatile int setMode = RETRIEVE_L; //TESTING I2C
 // * * * STATE MACHINE * * * //
 
 
@@ -71,10 +72,10 @@ int arrayCopy = 0; //delete later
 
 
 // * * * SONAR PIN INITIALIZERS * * * //
-const int TRIG_R = PB14;
-const int ECHO_R = PB15;
-const int TRIG_L = PB12;
-const int ECHO_L = PB13;
+const int TRIG_R = PB12;
+const int ECHO_R = PB13;
+const int TRIG_L = PB14;
+const int ECHO_L = PB15;
 // * * * SONAR PIN INITIALIZERS * * * //
 
 
@@ -113,6 +114,9 @@ void initialTapeConditions(float threshold);
 
 void setup() {
   Serial.begin(9600);
+  //#ifdef SERIAL_TESTING
+   // Serial1.begin(9600);
+  //#endif
   Wire.begin(); //Delete IF TX & RX Pins are causing problems for other functions
 
   //Delay added for debugging (allows time to catch beginning of Serial Monitor)
@@ -165,7 +169,7 @@ void setup() {
   forksInPath = initializeStrategy(TEAM);
 
   //Uncomment for robot to require tape following initial conditions
-  initialTapeConditions(threshold);;
+  //initialTapeConditions(threshold);;
 
   //Start driving the robot forward once the initial conditions have been meet
   pwm_start(LEFT_WHEEL_FWD, 100000, SPEED, 0, 1);
@@ -253,17 +257,22 @@ void loop() {
       //Stop the robot
       stopRobot();
 
+      #ifdef SLAVE_TESTING
+        Serial.println("RETRIEVE MODE");
+      #endif
+
       //Attempt to pick up stone, wait for exit code
       stateBefore180Turn = retrieveMode(LEFT);
 
-      setMode = TURN_R_180;
+      //setMode = TURN_R_180; UNCOMMENT
 
-      // stateBefore180Turn = RETRIEVE_L;
+      Serial.println("Exited Retrieve Mode successfully!");
+      setMode = APPROACH;
+
+      //stateBefore180Turn = RETRIEVE_L;
       // if(millis() - postLineUpTimer > 5000){
       //   setMode = TURN_R_180;
       // }
-
-      //setMode = retrieveMode(LEFT);
 
       break;
 
@@ -271,12 +280,12 @@ void loop() {
       while (millis() - postLineUpTimer < 270) {
         followTape();
       }
-      
+
       stopRobot();
 
       stateBefore180Turn = retrieveMode(RIGHT);
 
-      setMode = TURN_L_180;
+      //setMode = TURN_L_180;
       // stateBefore180Turn = RETRIEVE_R;
       // if(millis() - postLineUpTimer > 2000){ //CHANGE THIS
       //   setMode = TURN_L_180;
@@ -292,7 +301,7 @@ void loop() {
     case RETURN:
       //setMode = returnMode();
       stopRobot(); //change
-      returnMode(RETURN);
+      //returnMode(RETURN);
       break;
 
     case DEPOSIT:
@@ -328,10 +337,12 @@ void loop() {
 
     case RESET:
       forksInPath = switchStrategy(TEAM);
-      setMode = returnMode(RESET);
+      //setMode = returnMode(RESET);
+      setMode = RETURN;
       break;
 
   }
+  //retrieveMode(1);
   //To debug and see the mode that the robot exited with, uncomment the next line
   //exitModeAlerts(setMode);
 }
