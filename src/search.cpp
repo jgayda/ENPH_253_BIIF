@@ -28,10 +28,10 @@ int detectDistance_cm(int trigPin, int echoPin);
 int searchMode() {
     stateBeforeTurn = SEARCH;
     if(forkHistory.size() > 0) {
-        speedFactor = 0.24;
+        speedFactor = 0.21;
     }
     int direction =0;
-    int distance = DISTANCE_THRESH + 10 ;
+    int distance = DISTANCE_THRESH + 10;
     int fork = NO_FORK;
     int error = 10;
 
@@ -41,24 +41,25 @@ int searchMode() {
         error = followTape();
     }
 
+    //CHANGE
 
-    if(millis() - forkTimer < forkTimerLimit) {
-        #ifdef TESTING_SONAR
-            Serial.print("I'm not supposed to detect a fork, forkTimer: ");
-            Serial.print(forkTimer);
-            Serial.print(" | currentTimer: ");
-            Serial.print(millis());
-            Serial.print(" | forkTimerLimit: ");
-            Serial.println(forkTimer);
-        #endif
-        error = followTape(); // don't check for fork
-        return SEARCH; // don't detect forks;
-    }
+    // if(millis() - forkTimer < forkTimerLimit) {
+    //     #ifdef TESTING_SONAR
+    //         Serial.print("I'm not supposed to detect a fork, forkTimer: ");
+    //         Serial.print(forkTimer);
+    //         Serial.print(" | currentTimer: ");
+    //         Serial.print(millis());
+    //         Serial.print(" | forkTimerLimit: ");
+    //         Serial.println(forkTimer);
+    //     #endif
+    //     error = followTape(); // don't check for fork
+    //     return SEARCH; // don't detect forks;
+    // }
 
-    if(millis() - followTapeTimer < followTapeTimerLimit){
-        error = followTape();
-        return SEARCH;
-    }
+    // if(millis() - followTapeTimer < followTapeTimerLimit){
+    //     error = followTape();
+    //     return SEARCH;
+    // }
 
     // PinName trigPin;
     // PinName echoPin;

@@ -4,16 +4,15 @@
 #include <Arduino.h>
 #include <stack>
 
-#define TESTING 1
+//#define TESTING 1
 //#define TESTING_FORK 2
 //#define FORK_HISTORY_TEST 3
 //#define RAMP_TESTING 4
 //#define TESTING_SONAR 5
 //#define TEAM_TESTING 6
-#define SLAVE_TESTING 7
-#define SERIAL_TESTING 8
+//#define SLAVE_TESTING 7
+//#define SERIAL_TESTING 8
 
-#define SLAVE_SERIAL Serial1
 
 //#define COLLISION_TESTING
 /*Thanos starts from the right side of the course
@@ -62,8 +61,8 @@ extern int stateBefore180Turn;
 
 #define TAPE_FOLLOWER_L PA_5
 #define TAPE_FOLLOWER_R PA_6
-#define LEFT_WHEEL_FWD PA_2
-#define LEFT_WHEEL_BKWD PA_3
+#define LEFT_WHEEL_FWD PA_3
+#define LEFT_WHEEL_BKWD PA_2
 #define RIGHT_WHEEL_FWD PB_9
 #define RIGHT_WHEEL_BKWD PB_8
 

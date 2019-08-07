@@ -90,9 +90,9 @@ int followTape() {
   }
 
   #ifdef TESTING
-    if(millis() % 500 == 0){
-      //printMotorVal(error); //DEBUG
-    }
+    //if(millis() % 500 == 0){
+    //printMotorVal(error); //DEBUG
+    //}
   #endif
 
 

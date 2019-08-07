@@ -23,7 +23,7 @@
 #include <time.h>
 #include <math.h>
 
-int slaveCommTimeout = 200000;
+int slaveCommTimeout = 20000;
 
 byte masterRequest();
 void masterTransmit(byte buffer [3]);
@@ -31,11 +31,13 @@ void masterTransmit(byte buffer [3]);
 //TODO: DISABLE INTERRUPTS
 
 int retrieveMode(int direction) {
+  byte slaveResponse = 200;
     //CHANGE
     // pwm_stop(LEFT_WHEEL_FWD);
     // pwm_stop(LEFT_WHEEL_BKWD);
     // pwm_stop(RIGHT_WHEEL_FWD);
     // pwm_stop(RIGHT_WHEEL_BKWD);
+    // delay(4000);
   byte slaveAction = PICKUP;
   byte slaveDirection = (direction == LEFT) ? SLAVE_LEFT:SLAVE_RIGHT;
   byte slaveDistance = (direction == LEFT) ? detectDistance_cm(TRIG_L,ECHO_L):detectDistance_cm(TRIG_R,ECHO_R);
@@ -46,7 +48,6 @@ int retrieveMode(int direction) {
         Serial.print(slaveDistance);
         Serial.print(" | SLAVE DIRECTION: ");
         Serial.println(slaveDirection);
-
     #endif
 
   byte buffer [] = {slaveAction,slaveDirection,slaveDistance};
@@ -65,32 +66,45 @@ int retrieveMode(int direction) {
         Serial.println("started transmitting");
     #endif
 
-  //masterTransmit(buffer);
-//   SLAVE_SERIAL.print("tianna");
+  for (int i = 0; i < 3 ; i++) {
+    Serial3.write(buffer[i]);
+  }
 
 
 
-  byte masterResponse = masterRequest();
-  Serial.print("Is masterResponse equal to in progress?");
-  Serial.print(masterResponse);
-  Serial.print(" | ");
-  Serial.print(IN_PROGRESS);
-  Serial.print(" | ");
-  Serial.println(masterResponse == IN_PROGRESS);
-  byte masterResponse = IN_PROGRESS;
-  while(int(masterResponse) == int(IN_PROGRESS)) {
-    #ifdef SLAVE_TESTING
-        Serial.println("arm picking up");
-      #endif
-    masterResponse = masterRequest();
+  while (Serial3.available() <= 0 ) {
+    #ifdef SERIAL_TESTING
+      Serial.println("NO RESPONSE");
+    #endif
+    //if(millis() - transmisstionTimer > slaveCommTimeout) return RESET;
+  }
+
+  while (Serial3.available() > 0) {
+    slaveResponse = Serial3.read();
+    #ifdef SERIAL_TESTING
+      Serial.print("got something from slave: ");
+      Serial.println(slaveResponse);
+    #endif
     if(millis() - transmisstionTimer > slaveCommTimeout) return RESET;
   }
-  #ifdef SLAVE_TESTING
-    Serial.println("OUT OF THE LOOP");
-    Serial.println(masterResponse);
-    #endif
- return (int(masterResponse) == int(COMPLETE)) ? RETURN : RESET;
-    //return APPROACH;
+  return (int(slaveResponse) == int(COMPLETE)) ? RETURN : RESET;
+
+//   while(int(masterResponse) == int(IN_PROGRESS)) {
+//     #ifdef SLAVE_TESTING
+//         Serial.println("arm picking up");
+//       #endif
+//     masterResponse = masterRequest();
+//
+//   }
+//   #ifdef SLAVE_TESTING
+//     Serial.println("OUT OF THE LOOP");
+//     Serial.println(masterResponse);
+//     #endif
+//     pwm_start(LEFT_WHEEL_FWD, 100000, SPEED, 0, 1);
+//     pwm_start(LEFT_WHEEL_BKWD, 100000, SPEED, 0, 1);
+//     pwm_start(RIGHT_WHEEL_BKWD, 100000, SPEED, 0, 1);
+//     pwm_start(RIGHT_WHEEL_FWD, 100000, SPEED, 0, 1);
+//  return (int(masterResponse) == int(COMPLETE)) ? RETURN : RESET;
 }
 
 

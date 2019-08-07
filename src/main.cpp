@@ -16,6 +16,12 @@
 #include <followTape.h>
 #include <strategy.h>
 
+#define RX3 PB11
+#define TX3 PB10
+
+HardwareSerial Serial3 = HardwareSerial(RX3, TX3);
+
+
 // * * * TAPE FOLLOWER GLOBAL VARIABLE INITIALIZATION * * * //
 
 // * * * PID ERROR VARIABLES * * * //
@@ -27,9 +33,11 @@ volatile int previousDiffError = 0; //The previous DIFFERENT error value that we
 
 
 
+
 // * * * STATE MACHINE * * * //
 //volatile int setMode = SEARCH; //Robot will initially be in search mode (following tape and looking for posts)
-volatile int setMode = RETRIEVE_L; //TESTING I2C
+// volatile int setMode = SEARCH; //TESTING I2C
+volatile int setMode = SEARCH; //CHANGE BACK TO SEARCH MODE
 // * * * STATE MACHINE * * * //
 
 
@@ -42,7 +50,7 @@ bool forkPathCrossed = false; // have we crossed the tape completely
 int forkTimer = 0; //to reduce chances of double counting the forks
 int turnTimer = 0; //keeps turning before checking for the line
 int followTapeTimer = 0;
-int forkDetectionCondition = 1;
+int forkDetectionCondition = -1;
 int speedTimer = 0; // to decrease the speed after a certain amount of time
 // * * * COURSE NAVIGATION VARIABLES * * * //
 
@@ -55,7 +63,7 @@ bool pingSlave = false;
 
 
 // * * * DRIVE SYSTEM * * * //
-float speedFactor = 0.38;
+float speedFactor = 0.37;
 // * * * DRIVE SYSTEM * * * //
 
 
@@ -82,15 +90,15 @@ const int ECHO_L = PB15;
 int postLineUpTimer = 0;
 
 // * * * FORK DETECTION LEDs * * * //
-const int LEFT_FORK_LED = PB11;
-const int RIGHT_FORK_LED = PB10;
+const int LEFT_FORK_LED = PC14;
+const int RIGHT_FORK_LED = PC13;
 int ledTimer = 0;
 // * * * FORK DETECTION LEDs * * * //
 
 
 
 // * * * RAMP INCLINE SENSOR * * * //
-const int rampSensor = PB1;
+const int rampSensor = PB3;
 int rampSensorHistory = 2000;
 // * * * RAMP INCLINE SENSOR * * * //
 
@@ -114,13 +122,15 @@ void initialTapeConditions(float threshold);
 
 void setup() {
   Serial.begin(9600);
+  Serial.println("HI");
+  delay(500);
   //#ifdef SERIAL_TESTING
-   // Serial1.begin(9600);
+    Serial3.begin(9600);
   //#endif
-  Wire.begin(); //Delete IF TX & RX Pins are causing problems for other functions
+  //Wire.begin(); //Delete IF TX & RX Pins are causing problems for other functions
 
   //Delay added for debugging (allows time to catch beginning of Serial Monitor)
-  delay(5000); //Delete for competition
+   delay(5000); //Delete for competition
 
   //TEAM
   pinMode(WHAT_TEAM,INPUT);
@@ -132,18 +142,18 @@ void setup() {
   pinMode(TAPE_FOLLOWER_R,INPUT);
 
   //FORK INDICATOR LED
-  pinMode(LEFT_FORK_LED,OUTPUT);
-  pinMode(RIGHT_FORK_LED,OUTPUT);
+  // pinMode(LEFT_FORK_LED,OUTPUT);
+  // pinMode(RIGHT_FORK_LED,OUTPUT);
 
   //POST DETECTORS
   pinMode(FORK_SENSOR_L, INPUT);
   pinMode(FORK_SENSOR_R, INPUT);
 
-  //WHEEL MOTOR PWMs
-  pinMode(LEFT_WHEEL_FWD, OUTPUT);
-  pinMode(LEFT_WHEEL_BKWD, OUTPUT);
-  pinMode(RIGHT_WHEEL_FWD, OUTPUT);
-  pinMode(RIGHT_WHEEL_BKWD, OUTPUT);
+  // //WHEEL MOTOR PWMs
+  // pinMode(LEFT_WHEEL_FWD, OUTPUT);
+  // pinMode(LEFT_WHEEL_BKWD, OUTPUT);
+  // pinMode(RIGHT_WHEEL_FWD, OUTPUT);
+  // pinMode(RIGHT_WHEEL_BKWD, OUTPUT);
 
   //RAMP SENSOR
   pinMode(rampSensor,INPUT_PULLUP);
@@ -161,15 +171,17 @@ void setup() {
   pinMode(TRIG_R, OUTPUT);
 
   //TODO: SWTICH IS OPEN CHANGE TEAM TO THANOS
-  if(false) {
+  if(digitalRead(WHAT_TEAM) == 1) {
     TEAM = THANOS;
+    storageDirection = LEFT; // CHANGE FOR TEAM
+    initialTurn = LEFT; //CHANGE FOR TEAM
   }
 
   //Initialize the STRATEGY
   forksInPath = initializeStrategy(TEAM);
 
   //Uncomment for robot to require tape following initial conditions
-  //initialTapeConditions(threshold);;
+  //initialTapeConditions(threshold);
 
   //Start driving the robot forward once the initial conditions have been meet
   pwm_start(LEFT_WHEEL_FWD, 100000, SPEED, 0, 1);
@@ -185,7 +197,23 @@ void setup() {
 
 //MAIN STATE SWITCH BOX
 void loop() {
-
+  // int writeToslave = 22;
+  // Serial.println("sending to slave:");
+  // Serial.println(writeToslave);
+  // delay(2000);
+  // Serial3.write(writeToslave);
+  // Serial3.write(2);
+  // Serial3.write(10);
+  // while(Serial3.available() <= 0) {
+  //   Serial.println("No RESPNOSE");
+  // }
+  // while(Serial3.available() > 0) {
+  //   Serial.println("from slave");
+  //   Serial.println(Serial3.read());
+  // }
+  // Serial3.write(2);
+  // Serial3.write(10);
+  // delay(2000);
   #ifdef TEAM_TESTING
     Serial.println(analogRead(WHAT_TEAM));
     if(analogRead(WHAT_TEAM)  > 1000){
@@ -203,12 +231,12 @@ void loop() {
    }
    #endif
 
-  if(millis() - ledTimer > 1000){
-    //Serial.println("flashing the led");
-    digitalWrite(LEFT_FORK_LED,LOW);
-    digitalWrite(RIGHT_FORK_LED,LOW);
-    ledTimer = 0;
-  }
+  // if(millis() - ledTimer > 1000){
+  //   //Serial.println("flashing the led");
+  //   digitalWrite(LEFT_FORK_LED,LOW);
+  //   digitalWrite(RIGHT_FORK_LED,LOW);
+  //   ledTimer = 0;
+  // }
 
   // if(millis() - speedTimer > 9600 ) {
   //   speedFactor = 0.24;
@@ -224,7 +252,7 @@ void loop() {
       Serial.print(" | history:");
       Serial.println(rampSensorHistory);
     #endif
-    speedFactor = 0.18;
+    speedFactor = 0.21;
     forkDetectionCondition = 5; // can detect forks better on the surface
   }
   rampSensorHistory = analogRead(rampSensor);
@@ -249,13 +277,14 @@ void loop() {
       break;
 
     case RETRIEVE_L:
+
       //Align the robot with the post
       while (millis() - postLineUpTimer < 270) {
         followTape();
       }
 
       //Stop the robot
-      stopRobot();
+     stopRobot();
 
       #ifdef SLAVE_TESTING
         Serial.println("RETRIEVE MODE");
@@ -264,10 +293,12 @@ void loop() {
       //Attempt to pick up stone, wait for exit code
       stateBefore180Turn = retrieveMode(LEFT);
 
-      //setMode = TURN_R_180; UNCOMMENT
+      //Serial.println(stateBefore180Turn);
 
-      Serial.println("Exited Retrieve Mode successfully!");
-      setMode = APPROACH;
+      setMode = TURN_R_180; //UNCOMMENT
+
+      //Serial.println("Exited Retrieve Mode successfully!");
+      //setMode = APPROACH;
 
       //stateBefore180Turn = RETRIEVE_L;
       // if(millis() - postLineUpTimer > 5000){
@@ -285,7 +316,7 @@ void loop() {
 
       stateBefore180Turn = retrieveMode(RIGHT);
 
-      //setMode = TURN_L_180;
+      setMode = TURN_L_180;
       // stateBefore180Turn = RETRIEVE_R;
       // if(millis() - postLineUpTimer > 2000){ //CHANGE THIS
       //   setMode = TURN_L_180;
@@ -301,7 +332,8 @@ void loop() {
     case RETURN:
       //setMode = returnMode();
       stopRobot(); //change
-      //returnMode(RETURN);
+      //Serial.println("RETURN MODE");
+      returnMode(RETURN);
       break;
 
     case DEPOSIT:
@@ -337,8 +369,9 @@ void loop() {
 
     case RESET:
       forksInPath = switchStrategy(TEAM);
-      //setMode = returnMode(RESET);
-      setMode = RETURN;
+      setMode = returnMode(RESET);
+      //Serial.println("IN RESET MODE");
+      //setMode = RETURN;
       break;
 
   }

@@ -163,7 +163,7 @@ int returnMode(int returnState) {
                 }
             }
             if(forkNumber == 2) {
-                forkHistory.pop(); //change 
+                forkHistory.pop(); //change
                 followTape();
                 return returnState;
             }
