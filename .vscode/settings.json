@@ -1,6 +1,6 @@
 {
     "terminal.integrated.env.osx": {
-        "PATH": "/Users/jacksongayda/.platformio/penv/bin:/Users/jacksongayda/.platformio/penv:/Users/jacksongayda/.platformio/packages/tool-stm32duino/stm32flash:/Library/Frameworks/Python.framework/Versions/2.7/bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Frameworks/Mono.framework/Versions/Current/Commands",
+        "PATH": "/User/mojan/.platformio/penv/bin:/User/mojan/.platformio/penv:/Library/Frameworks/Python.framework/Versions/3.7/bin:/anaconda3/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Frameworks/Mono.framework/Versions/Current/Commands",
         "PLATFORMIO_CALLER": "vscode"
     }
 }

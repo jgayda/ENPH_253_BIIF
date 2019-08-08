@@ -9,9 +9,9 @@
 //#define FORK_HISTORY_TEST 3
 //#define RAMP_TESTING 4
 //#define TESTING_SONAR 5
-//#define TEAM_TESTING 6
-//#define SLAVE_TESTING 7
-//#define SERIAL_TESTING 8
+#define TEAM_TESTING 6
+#define SLAVE_TESTING 7
+#define SERIAL_TESTING 8
 
 
 //#define COLLISION_TESTING
@@ -66,7 +66,7 @@ extern int stateBefore180Turn;
 #define RIGHT_WHEEL_FWD PB_9
 #define RIGHT_WHEEL_BKWD PB_8
 
-#define FORK_THRESHOLD_OFFSET 80 // CHANGE
+#define FORK_THRESHOLD_OFFSET 120 // CHANGE
 
 //POST DETECTORS
 #define FORK_SENSOR_L PA_4

@@ -65,7 +65,6 @@ int returnMode(int returnState) {
             //int nextTurn = currentPostMap[numForksTaken-1];
             int forkNumber  = forkHistory.size();
             if(forkNumber == 1){
-                forkHistory.pop();
                 //you're at home fork
                 // if(TEAM ==METHANOS) {
                 //     turnTimer = millis();
@@ -75,6 +74,7 @@ int returnMode(int returnState) {
                 //     return TURN_L;
                 // }
                 if(returnState == RETURN) {
+                    forkHistory.pop();
                     turnTimer = millis();
                     stateBeforeTurn = DEPOSIT;
                     return (TEAM == METHANOS) ? TURN_R : TURN_L;

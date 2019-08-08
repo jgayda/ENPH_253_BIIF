@@ -14,8 +14,12 @@
 // float k_d = 0.58 * SPEED;
 
 // AUG 7th RETUNE
-float k_p = 0.23 * SPEED;
-float k_d = 0.58 * SPEED;
+float k_p = 0.28 * SPEED;
+float k_d = 0.54 * SPEED;
+
+//AUG 7th COMP ROOM
+// float k_p = 0.20 * SPEED;
+// float k_d = 0.60 * SPEED;
 
 // float k_p = 0.23 * SPEED;
 // float k_d = 0.56 * SPEED;

@@ -63,7 +63,7 @@ bool pingSlave = false;
 
 
 // * * * DRIVE SYSTEM * * * //
-float speedFactor = 0.37;
+float speedFactor = 0.45;
 // * * * DRIVE SYSTEM * * * //
 
 
@@ -142,8 +142,8 @@ void setup() {
   pinMode(TAPE_FOLLOWER_R,INPUT);
 
   //FORK INDICATOR LED
-  // pinMode(LEFT_FORK_LED,OUTPUT);
-  // pinMode(RIGHT_FORK_LED,OUTPUT);
+  pinMode(LEFT_FORK_LED,OUTPUT);
+  pinMode(RIGHT_FORK_LED,OUTPUT);
 
   //POST DETECTORS
   pinMode(FORK_SENSOR_L, INPUT);
@@ -170,11 +170,17 @@ void setup() {
   pinMode(ECHO_R, INPUT);
   pinMode(TRIG_R, OUTPUT);
 
+  delay (3000);
+
   //TODO: SWTICH IS OPEN CHANGE TEAM TO THANOS
-  if(digitalRead(WHAT_TEAM) == 1) {
+  if(analogRead(WHAT_TEAM) == 0) {
     TEAM = THANOS;
     storageDirection = LEFT; // CHANGE FOR TEAM
     initialTurn = LEFT; //CHANGE FOR TEAM
+    #ifdef TEAM_TESTING
+      Serial.println(analogRead(WHAT_TEAM));
+      Serial.println("Switched to thanos");
+  #endif
   }
 
   //Initialize the STRATEGY
@@ -215,12 +221,12 @@ void loop() {
   // Serial3.write(10);
   // delay(2000);
   #ifdef TEAM_TESTING
-    Serial.println(analogRead(WHAT_TEAM));
-    if(analogRead(WHAT_TEAM)  > 1000){
-      Serial.println("THANOS");
-    } else {
-      Serial.println("METHANOS");
-    }
+   // Serial.println(analogRead(WHAT_TEAM));
+    // if(analogRead(WHAT_TEAM)  == 0){
+    //   Serial.println("THANOS");
+    // } else {
+    //   Serial.println("METHANOS");
+    // }
   #endif
 
   #ifdef COLLISION_TESTING
@@ -231,12 +237,12 @@ void loop() {
    }
    #endif
 
-  // if(millis() - ledTimer > 1000){
-  //   //Serial.println("flashing the led");
-  //   digitalWrite(LEFT_FORK_LED,LOW);
-  //   digitalWrite(RIGHT_FORK_LED,LOW);
-  //   ledTimer = 0;
-  // }
+  if(millis() - ledTimer > 1000){
+    //Serial.println("flashing the led");
+    digitalWrite(LEFT_FORK_LED,LOW);
+    digitalWrite(RIGHT_FORK_LED,LOW);
+    ledTimer = 0;
+  }
 
   // if(millis() - speedTimer > 9600 ) {
   //   speedFactor = 0.24;

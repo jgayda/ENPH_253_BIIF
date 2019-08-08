@@ -41,25 +41,24 @@ int searchMode() {
         error = followTape();
     }
 
-    //CHANGE
 
-    // if(millis() - forkTimer < forkTimerLimit) {
-    //     #ifdef TESTING_SONAR
-    //         Serial.print("I'm not supposed to detect a fork, forkTimer: ");
-    //         Serial.print(forkTimer);
-    //         Serial.print(" | currentTimer: ");
-    //         Serial.print(millis());
-    //         Serial.print(" | forkTimerLimit: ");
-    //         Serial.println(forkTimer);
-    //     #endif
-    //     error = followTape(); // don't check for fork
-    //     return SEARCH; // don't detect forks;
-    // }
+    if(millis() - forkTimer < forkTimerLimit) {
+        #ifdef TESTING_SONAR
+            Serial.print("I'm not supposed to detect a fork, forkTimer: ");
+            Serial.print(forkTimer);
+            Serial.print(" | currentTimer: ");
+            Serial.print(millis());
+            Serial.print(" | forkTimerLimit: ");
+            Serial.println(forkTimer);
+        #endif
+        error = followTape(); // don't check for fork
+        return SEARCH; // don't detect forks;
+    }
 
-    // if(millis() - followTapeTimer < followTapeTimerLimit){
-    //     error = followTape();
-    //     return SEARCH;
-    // }
+    if(millis() - followTapeTimer < followTapeTimerLimit){
+        error = followTape();
+        return SEARCH;
+    }
 
     // PinName trigPin;
     // PinName echoPin;
@@ -130,14 +129,13 @@ int searchMode() {
             #endif
 
             int nextTurn = currentPostMap[numForksTaken];
-            int forkNumber  = forkHistory.size();
             if(forkHistory.size() == forksInPath - 1 && nextTurn == direction){
                 stopRobot();
                 postLineUpTimer = millis();
                 return RETRIEVE_L;
             }
             if(forkHistory.size() == forksInPath - 1 && nextTurn != direction ){
-                stateBeforeTurn = SEARCH;
+                stateBefore180Turn = RETRIEVE_R;
                 return TURN_L_180;
             }
             numForksTaken ++;
@@ -148,6 +146,7 @@ int searchMode() {
                 return TURN_L;
             } else {
                 forkHistory.push(RIGHT);
+                followTapeTimer = millis();
                 //turnRobot(TURN_R);
                 return SEARCH;
             }
@@ -206,7 +205,7 @@ int searchMode() {
                 return RETRIEVE_R;
             }
             if(forkHistory.size() == forksInPath - 1 && nextTurn != direction ){
-                stateBeforeTurn = SEARCH;
+                stateBefore180Turn = RETRIEVE_L;
                 return TURN_R_180;
             }
             numForksTaken ++;

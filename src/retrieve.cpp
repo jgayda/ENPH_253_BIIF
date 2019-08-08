@@ -19,6 +19,7 @@
 #include <stdint.h>
 
 #include <sensors.h>
+#include <strategy.h>
 #include <search.h>
 #include <time.h>
 #include <math.h>
@@ -33,14 +34,12 @@ void masterTransmit(byte buffer [3]);
 int retrieveMode(int direction) {
   byte slaveResponse = 200;
     //CHANGE
-    // pwm_stop(LEFT_WHEEL_FWD);
-    // pwm_stop(LEFT_WHEEL_BKWD);
-    // pwm_stop(RIGHT_WHEEL_FWD);
-    // pwm_stop(RIGHT_WHEEL_BKWD);
-    // delay(4000);
   byte slaveAction = PICKUP;
-  byte slaveDirection = (direction == LEFT) ? SLAVE_LEFT:SLAVE_RIGHT;
-  byte slaveDistance = (direction == LEFT) ? detectDistance_cm(TRIG_L,ECHO_L):detectDistance_cm(TRIG_R,ECHO_R);
+  byte slaveDirection = (currentPostMap[2] == LEFT) ? SLAVE_LEFT : SLAVE_RIGHT; //CHANGE;
+  //byte slaveDirection = (direction == LEFT) ? SLAVE_LEFT:SLAVE_RIGHT;
+  byte slaveDistance = (slaveDirection == LEFT) ? detectDistance_cm(TRIG_L,ECHO_L):detectDistance_cm(TRIG_R,ECHO_R);
+  //byte slaveDistance = (direction == LEFT) ? detectDistance_cm(TRIG_L,ECHO_L):detectDistance_cm(TRIG_R,ECHO_R);
+
 
 
     #ifdef SLAVE_TESTING
@@ -70,24 +69,56 @@ int retrieveMode(int direction) {
     Serial3.write(buffer[i]);
   }
 
+  int complete = 1;
+  int unable = 2;
 
 
-  while (Serial3.available() <= 0 ) {
+  while (Serial3.available() <= 0 || (Serial3.peek() != byte(complete) && Serial3.peek() != byte(unable))) {
+    if(Serial3.peek() > 50) {
+      Serial3.read();
+    }
     #ifdef SERIAL_TESTING
-      Serial.println("NO RESPONSE");
+      Serial.print("NO RESPONSE | peek --> ");
+      Serial.println(Serial3.peek());
     #endif
     //if(millis() - transmisstionTimer > slaveCommTimeout) return RESET;
+    //if(millis() - transmisstionTimer > slaveCommTimeout) return RESET;
   }
+  // while (Serial3.available() > 0) {
+  // // while (Serial3.available() > 0 && (Serial3.peek() == COMPLETE || Serial3.peek() == UNABLE))
+  //   slaveResponse = Serial3.read();
+  //   // if(slaveResponse == 255){
+  //   //   while (Serial3.available() > 0){
+  //   //     slaveResponse = Serial3.read();
+  //   //   }
+  //   // }
+  // }
 
-  while (Serial3.available() > 0) {
-    slaveResponse = Serial3.read();
+  // while (Serial3.available()<=0){
+  //   //Serial.println("No response from slave...");
+  // }
+  slaveResponse = Serial3.read();
+
+
     #ifdef SERIAL_TESTING
       Serial.print("got something from slave: ");
       Serial.println(slaveResponse);
     #endif
-    if(millis() - transmisstionTimer > slaveCommTimeout) return RESET;
+    return (int(slaveResponse) == int(COMPLETE)) ? RETURN : RESET;
   }
-  return (int(slaveResponse) == int(COMPLETE)) ? RETURN : RESET;
+  // while (slaveResponse != COMPLETE || slaveResponse != UNABLE) {
+  //     while (Serial3.available() <= 0 ) {
+  //     #ifdef SERIAL_TESTING
+  //       Serial.println("NO RESPONSE");
+  //     #endif
+  //     if(millis() - transmisstionTimer > slaveCommTimeout) return RESET;
+  //     }
+  //     while (Serial3.available() > 0){
+
+  //     }
+
+  // }
+
 
 //   while(int(masterResponse) == int(IN_PROGRESS)) {
 //     #ifdef SLAVE_TESTING
@@ -105,7 +136,7 @@ int retrieveMode(int direction) {
 //     pwm_start(RIGHT_WHEEL_BKWD, 100000, SPEED, 0, 1);
 //     pwm_start(RIGHT_WHEEL_FWD, 100000, SPEED, 0, 1);
 //  return (int(masterResponse) == int(COMPLETE)) ? RETURN : RESET;
-}
+
 
 
 
